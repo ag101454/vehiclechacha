@@ -3,6 +3,8 @@ import Image from 'next/image';
 import { Fuel, Users, Settings, ArrowRight, Car as CarIcon } from 'lucide-react';
 import { prisma } from '@/lib/db';
 
+export const dynamic = 'force-dynamic';
+
 async function getPopularCars() {
   try {
     const cars = await prisma.vehicle.findMany({
@@ -18,7 +20,8 @@ async function getPopularCars() {
         createdAt: 'desc',
       },
     });
-
+    
+    console.log('Popular cars found:', cars.length);
     return cars;
   } catch (error) {
     console.error('Error fetching popular cars:', error);
@@ -38,37 +41,40 @@ export default async function PopularCars() {
   const cars = await getPopularCars();
 
   if (cars.length === 0) {
-    return null;
+    return (
+      <section className="py-16">
+        <div className="container-custom">
+          <div className="text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">
+              Popular New Cars
+            </h2>
+            <p className="text-chacha-muted">No popular cars yet. Check back soon!</p>
+          </div>
+        </div>
+      </section>
+    );
   }
 
   return (
     <section className="py-16">
       <div className="container-custom">
-      <div className="mb-12">
-  <div className="flex items-center gap-2 mb-3">
-    <div className="w-8 h-0.5 bg-chacha-yellow" />
-    <span className="text-chacha-yellow text-sm font-semibold tracking-wider uppercase">
-      Top Picks
-    </span>
-  </div>
-  <div className="flex items-end justify-between">
-    <div>
-      <h2 className="text-3xl md:text-4xl font-bold text-white">
-        Popular New Cars
-      </h2>
-      <p className="text-chacha-muted mt-2 text-lg">
-        Most searched cars in Pakistan
-      </p>
-    </div>
-    <Link
-      href="/new-cars"
-      className="hidden md:inline-flex items-center gap-2 text-chacha-yellow hover:text-yellow-400 font-medium transition-colors group"
-    >
-      View All Cars
-      <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-    </Link>
-  </div>
-</div>
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h2 className="text-3xl md:text-4xl font-bold text-white">
+              Popular New Cars
+            </h2>
+            <p className="text-chacha-muted mt-2">
+              Most searched cars in Pakistan
+            </p>
+          </div>
+          <Link
+            href="/new-cars"
+            className="text-chacha-yellow hover:text-yellow-400 font-medium inline-flex items-center gap-1"
+          >
+            View All
+            <ArrowRight size={16} />
+          </Link>
+        </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {cars.map((car) => (

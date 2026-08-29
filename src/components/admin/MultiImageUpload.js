@@ -1,13 +1,66 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import Image from 'next/image';
+import NextImage from 'next/image';
 import { Upload, X, Loader2, AlertCircle, Plus } from 'lucide-react';
 
 export default function MultiImageUpload({ images = [], onChange, maxImages = 3 }) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
   const fileInputRef = useRef(null);
+
+  // Compress image before uploading
+  const compressImage = (file, maxWidth = 800, quality = 0.6) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new window.Image(); // Use window.Image explicitly
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          
+          if (width > maxWidth) {
+            height = (height * maxWidth) / width;
+            width = maxWidth;
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          canvas.toBlob((blob) => {
+            if (blob) {
+              resolve(blob);
+            } else {
+              // Fallback to original file if compression fails
+              resolve(file);
+            }
+          }, 'image/jpeg', quality);
+        };
+        img.onerror = () => {
+          // If image fails to load, use original file
+          resolve(file);
+        };
+        img.src = e.target.result;
+      };
+      reader.onerror = () => {
+        // If file reading fails, use original
+        resolve(file);
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const fileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve(e.target.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
 
   const handleFileSelect = async (e) => {
     const files = e.target.files;
@@ -25,30 +78,26 @@ export default function MultiImageUpload({ images = [], onChange, maxImages = 3 
       const uploadedUrls = [];
 
       for (const file of files) {
-        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/avif'];
+        // Validate file type
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
         if (!allowedTypes.includes(file.type)) {
-          setError(`Invalid file type: ${file.type}. Only JPEG, PNG, WebP, and AVIF are allowed.`);
+          setError('Only JPG, PNG, and WebP images are allowed');
           continue;
         }
 
+        // Validate file size (max 5MB original)
         if (file.size > 5 * 1024 * 1024) {
-          setError('File too large. Maximum size is 5MB.');
+          setError('File too large. Maximum 5MB.');
           continue;
         }
 
-        const formData = new FormData();
-        formData.append('file', file);
-
-        const response = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData,
-        });
-
-        const data = await response.json();
-
-        if (response.ok && data.success) {
-          uploadedUrls.push(data.url);
-        }
+        // Compress the image
+        const compressedBlob = await compressImage(file);
+        
+        // Convert to base64
+        const base64 = await fileToBase64(compressedBlob);
+        
+        uploadedUrls.push(base64);
       }
 
       if (uploadedUrls.length > 0) {
@@ -80,7 +129,6 @@ export default function MultiImageUpload({ images = [], onChange, maxImages = 3 
   const handleDrop = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    
     const files = e.dataTransfer.files;
     if (files && files.length > 0) {
       handleFileSelect({ target: { files } });
@@ -95,7 +143,7 @@ export default function MultiImageUpload({ images = [], onChange, maxImages = 3 
           
           return image ? (
             <div key={index} className="relative aspect-[16/10] bg-chacha-black rounded-lg overflow-hidden border border-chacha-border">
-              <Image
+              <NextImage
                 src={image}
                 alt={`Vehicle image ${index + 1}`}
                 fill
@@ -106,7 +154,6 @@ export default function MultiImageUpload({ images = [], onChange, maxImages = 3 
                 type="button"
                 onClick={() => handleRemove(index)}
                 className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors z-10"
-                title="Remove image"
               >
                 <X size={14} />
               </button>
@@ -127,7 +174,7 @@ export default function MultiImageUpload({ images = [], onChange, maxImages = 3 
               {uploading && index === images.length ? (
                 <div className="flex flex-col items-center">
                   <Loader2 className="text-chacha-yellow animate-spin mb-2" size={24} />
-                  <p className="text-chacha-muted text-xs">Uploading...</p>
+                  <p className="text-chacha-muted text-xs">Compressing...</p>
                 </div>
               ) : (
                 <div className="flex flex-col items-center">
@@ -145,14 +192,14 @@ export default function MultiImageUpload({ images = [], onChange, maxImages = 3 
       <input
         ref={fileInputRef}
         type="file"
-        accept="image/jpeg,image/png,image/webp,image/avif"
+        accept="image/jpeg,image/png,image/webp"
         onChange={handleFileSelect}
         className="hidden"
         multiple
       />
 
       <p className="text-chacha-muted text-xs mt-2">
-        Upload up to {maxImages} images. First image will be the main image. PNG, JPG, WebP up to 5MB each.
+        Upload up to {maxImages} images. Images are compressed to reduce size. JPG, PNG, WebP supported.
       </p>
 
       {error && (

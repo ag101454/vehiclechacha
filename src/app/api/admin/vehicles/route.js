@@ -17,7 +17,8 @@ export async function GET() {
 export async function POST(request) {
   try {
     const data = await request.json();
-    console.log('Creating vehicle:', data);
+    console.log('Creating vehicle with data:', data);
+    console.log('isPopular value:', data.isPopular, 'type:', typeof data.isPopular);
 
     let brand = await prisma.brand.findFirst({
       where: { name: data.brand },
@@ -48,7 +49,7 @@ export async function POST(request) {
         description: data.description || null,
         image: data.image || null,
         images: JSON.stringify(data.images || []),
-        isPopular: Boolean(data.isPopular),
+        isPopular: data.isPopular === true || data.isPopular === 'true',
         isAvailable: data.isAvailable !== false,
         launchYear: data.launchYear ? Number(data.launchYear) : null,
         horsepower: data.horsepower ? Number(data.horsepower) : null,
@@ -68,18 +69,11 @@ export async function POST(request) {
       include: { brand: true },
     });
 
-    console.log('Vehicle created successfully:', vehicle);
-    return NextResponse.json({ 
-      success: true, 
-      message: 'Vehicle added successfully', 
-      vehicle 
-    });
+    console.log('Vehicle created:', vehicle.name, 'isPopular:', vehicle.isPopular);
+    return NextResponse.json({ success: true, message: 'Vehicle added successfully', vehicle });
 
   } catch (error) {
     console.error('POST error:', error.message);
-    return NextResponse.json({ 
-      success: false,
-      message: error.message 
-    }, { status: 500 });
+    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
   }
 }

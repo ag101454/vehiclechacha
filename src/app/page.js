@@ -7,13 +7,26 @@ import BrandShowcase from '@/components/home/BrandShowcase';
 import WhyChoose from '@/components/home/WhyChoose';
 import Link from 'next/link';
 import { ArrowRight, Car, CheckCircle, Sparkles, TrendingUp } from 'lucide-react';
+import { prisma } from '@/lib/db';
+
+// Force dynamic rendering - Always fetch fresh data
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export const metadata = {
   title: 'VehicleChacha - New Cars in Pakistan | Compare Prices & Find Your Car',
   description: 'Find the right car for your budget. Compare new cars in Pakistan, check prices and specifications. Budget Batao, Gaari Chacha Dhoondhega.',
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  // Fetch dynamic car count
+  let carCount = 0;
+  try {
+    carCount = await prisma.vehicle.count({ where: { isAvailable: true } });
+  } catch (error) {
+    console.error('Error fetching car count:', error);
+  }
+
   return (
     <>
       <Navbar />
@@ -24,7 +37,6 @@ export default function HomePage() {
         <BrandShowcase />
         <WhyChoose />
         
-        {/* SEO Content Section */}
         <section className="py-20 bg-chacha-card/30 relative overflow-hidden">
           <div className="absolute inset-0 opacity-5" style={{
             backgroundImage: 'radial-gradient(circle at center, #FFC400 1px, transparent 1px)',
@@ -33,7 +45,6 @@ export default function HomePage() {
           
           <div className="container-custom relative">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              {/* Left Content */}
               <div>
                 <div className="flex items-center gap-2 mb-3">
                   <div className="w-8 h-0.5 bg-chacha-yellow" />
@@ -81,11 +92,10 @@ export default function HomePage() {
                 </Link>
               </div>
 
-              {/* Right Content - Stats Cards */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="card-dark p-6 text-center hover:border-chacha-yellow transition-all duration-300 group">
                   <Car className="text-chacha-yellow mx-auto mb-3 group-hover:scale-110 transition-transform" size={32} />
-                  <div className="text-3xl font-bold text-white mb-1">0+</div>
+                  <div className="text-3xl font-bold text-white mb-1">{carCount}+</div>
                   <div className="text-chacha-muted text-sm">Cars Listed</div>
                 </div>
                 <div className="card-dark p-6 text-center hover:border-chacha-yellow transition-all duration-300 group">
