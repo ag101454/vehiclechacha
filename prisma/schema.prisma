@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Brand {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  slug        String    @unique
+  description String?
+  country     String?
+  logo        String?
+  vehicles    Vehicle[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Vehicle {
+  id           String   @id @default(cuid())
+  brandId      String
+  brand        Brand    @relation(fields: [brandId], references: [id])
+  name         String
+  slug         String
+  bodyType     String
+  price        Float
+  oldPrice     Float?
+  engine       String?
+  transmission String?
+  fuelType     String?
+  fuelEconomy  String?
+  seats        Int?
+  description  String?
+  image        String?
+  images       String   @default("[]")
+  isPopular    Boolean  @default(false)
+  isAvailable  Boolean  @default(true)
+  launchYear   Int?
+  horsepower   Int?
+  torque       String?
+  groundClearance String?
+  bootSpace    String?
+  length       String?
+  width        String?
+  height       String?
+  wheelbase    String?
+  fuelTankCapacity String?
+  kerbWeight   String?
+  features     String   @default("[]")
+  pros         String   @default("[]")
+  cons         String   @default("[]")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([brandId, name])
+  @@index([bodyType])
+  @@index([price])
+  @@index([isPopular])
+}
+
+model Guide {
+  id        String   @id @default(cuid())
+  title     String
+  slug      String   @unique
+  content   String
+  excerpt   String?
+  image     String?
+  category  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
