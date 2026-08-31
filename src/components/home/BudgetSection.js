@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowRight, Wallet, TrendingUp, Tag } from 'lucide-react';
+import { ArrowRight, Wallet, TrendingUp } from 'lucide-react';
 
 const budgetRanges = [
   { 
@@ -7,34 +7,41 @@ const budgetRanges = [
     href: '/best-cars/under-20-lakh', 
     range: '0 - 2,000,000',
     description: 'Entry level & budget friendly',
-    accent: 'border-l-yellow-400',
+    accent: 'border-l-green-400',
   },
   { 
     label: 'Under 30 Lakh', 
     href: '/best-cars/under-30-lakh', 
     range: '0 - 3,000,000',
     description: 'Affordable family cars',
-    accent: 'border-l-green-400',
+    accent: 'border-l-blue-400',
   },
   { 
     label: 'Under 40 Lakh', 
     href: '/best-cars/under-40-lakh', 
     range: '0 - 4,000,000',
     description: 'Mid-range options',
-    accent: 'border-l-blue-400',
+    accent: 'border-l-purple-400',
   },
   { 
     label: 'Under 50 Lakh', 
     href: '/best-cars/under-50-lakh', 
     range: '0 - 5,000,000',
     description: 'Premium compact segment',
-    accent: 'border-l-purple-400',
+    accent: 'border-l-orange-400',
+  },
+  { 
+    label: 'Under 60 Lakh', 
+    href: '/best-cars/under-60-lakh', 
+    range: '0 - 6,000,000',
+    description: 'Executive sedans',
+    accent: 'border-l-pink-400',
   },
   { 
     label: 'Under 70 Lakh', 
     href: '/best-cars/under-70-lakh', 
     range: '0 - 7,000,000',
-    description: 'Executive & SUV segment',
+    description: 'SUV & crossover segment',
     accent: 'border-l-red-400',
   },
   { 
@@ -49,7 +56,6 @@ const budgetRanges = [
 export default function BudgetSection() {
   return (
     <section className="py-20 bg-chacha-card/30 relative overflow-hidden">
-      {/* Subtle background pattern */}
       <div className="absolute inset-0 opacity-5" style={{
         backgroundImage: 'linear-gradient(#FFC400 1px, transparent 1px), linear-gradient(90deg, #FFC400 1px, transparent 1px)',
         backgroundSize: '60px 60px',
@@ -85,13 +91,12 @@ export default function BudgetSection() {
 
         {/* Budget Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {budgetRanges.map((budget, index) => (
+          {budgetRanges.map((budget) => (
             <Link
               key={budget.href}
               href={budget.href}
               className={`card-dark p-6 border-l-4 ${budget.accent} hover:border-chacha-yellow hover:shadow-2xl hover:shadow-chacha-yellow/10 hover:-translate-y-1.5 transition-all duration-300 group relative overflow-hidden`}
             >
-              {/* Hover effect overlay */}
               <div className="absolute inset-0 bg-gradient-to-br from-chacha-yellow/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               
               <div className="relative z-10">
@@ -126,10 +131,7 @@ export default function BudgetSection() {
         {/* Bottom Info */}
         <div className="mt-10 text-center">
           <p className="text-chacha-muted text-sm">
-            Prices are indicative and may vary by variant and dealership. 
-            <Link href="/how-we-score" className="text-chacha-yellow hover:text-yellow-400 ml-1 font-medium">
-              Learn how we evaluate cars →
-            </Link>
+            Prices are indicative and may vary by variant and dealership.
           </p>
         </div>
       </div>
