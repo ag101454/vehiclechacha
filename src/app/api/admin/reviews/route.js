@@ -16,11 +16,21 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json({ reviews });
+    console.log('Admin API - Reviews found:', reviews.length);
+    
+    // Log each review
+    reviews.forEach((r, i) => {
+      console.log(`${i + 1}. ${r.userName} - ${r.vehicle?.brand?.name} ${r.vehicle?.name}`);
+    });
+
+    return NextResponse.json({ 
+      reviews,
+      count: reviews.length,
+    });
   } catch (error) {
-    console.error('Error fetching reviews:', error);
+    console.error('Admin API Error:', error);
     return NextResponse.json(
-      { message: 'Failed to fetch reviews', error: error.message },
+      { reviews: [], count: 0, error: error.message },
       { status: 500 }
     );
   }
