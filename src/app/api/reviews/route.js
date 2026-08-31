@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 
-// GET reviews for a vehicle
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -19,7 +18,7 @@ export async function GET(request) {
       orderBy: { createdAt: 'desc' },
     });
 
-    // Calculate rating breakdown
+    // Calculate breakdown
     const breakdown = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
     reviews.forEach(r => breakdown[r.rating]++);
 
@@ -40,26 +39,17 @@ export async function GET(request) {
   }
 }
 
-// POST new review
 export async function POST(request) {
   try {
     const data = await request.json();
     const { vehicleId, userName, email, rating, title, review, pros, cons } = data;
 
-    // Validate
     if (!vehicleId || !userName || !email || !rating || !review) {
       return NextResponse.json({ message: 'All fields are required' }, { status: 400 });
     }
 
-    if (rating < 1 || rating > 5) {
-      return NextResponse.json({ message: 'Rating must be between 1 and 5' }, { status: 400 });
-    }
-
-    // Check if email already reviewed this vehicle
     const existingReview = await prisma.review.findUnique({
-      where: {
-        vehicleId_email: { vehicleId, email },
-      },
+      where: { vehicleId_email: { vehicleId, email } },
     });
 
     if (existingReview) {
@@ -69,7 +59,11 @@ export async function POST(request) {
       );
     }
 
-    // Create review
+    const vehicle = await prisma.vehicle.findUnique({
+      where: { id: vehicleId },
+      include: { brand: true },
+    });
+
     const newReview = await prisma.review.create({
       data: {
         vehicleId,
@@ -80,23 +74,19 @@ export async function POST(request) {
         review,
         pros: pros || null,
         cons: cons || null,
-        isApproved: true, // Auto-approve for now
+        isApproved: true,
       },
     });
 
-    // Update vehicle average rating
+    // Update vehicle rating
     const allReviews = await prisma.review.findMany({
       where: { vehicleId, isApproved: true },
     });
-
     const avgRating = allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length;
 
     await prisma.vehicle.update({
       where: { id: vehicleId },
-      data: {
-        averageRating: avgRating,
-        totalReviews: allReviews.length,
-      },
+      data: { averageRating: avgRating, totalReviews: allReviews.length },
     });
 
     return NextResponse.json({ 

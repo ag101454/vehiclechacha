@@ -31,8 +31,20 @@ export default function ReviewSection({ vehicleId, vehicleName }) {
 
   const fetchReviews = async () => {
     try {
-      const response = await fetch(`/api/reviews?vehicleId=${vehicleId}`);
-      const data = await response.json();
+      const response = await fetch(`/api/reviews?vehicleId=${vehicleId}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        cache: 'no-store',
+      });
+      
+      const text = await response.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch {
+        data = { reviews: [], averageRating: 0, totalReviews: 0, breakdown: {} };
+      }
+      
       if (response.ok) {
         setReviews(data.reviews || []);
         setAverageRating(data.averageRating || 0);
@@ -41,6 +53,7 @@ export default function ReviewSection({ vehicleId, vehicleName }) {
       }
     } catch (error) {
       console.error('Error fetching reviews:', error);
+      setReviews([]);
     } finally {
       setLoading(false);
     }
