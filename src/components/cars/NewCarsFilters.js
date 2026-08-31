@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
-import { Filter, X } from 'lucide-react';
+import { Filter, X, Star } from 'lucide-react';
 
 export default function NewCarsFilters() {
   const router = useRouter();
@@ -15,6 +15,7 @@ export default function NewCarsFilters() {
     maxPrice: searchParams.get('maxPrice') || '',
     fuelType: searchParams.get('fuelType') || '',
     transmission: searchParams.get('transmission') || '',
+    minRating: searchParams.get('minRating') || '',
   };
 
   const handleFilterChange = (key, value) => {
@@ -45,7 +46,7 @@ export default function NewCarsFilters() {
           <Filter size={16} />
           Filters
           {hasActiveFilters && (
-            <span className="bg-chacha-yellow text-chacha-black rounded-full px-2 py-0.5 text-xs">
+            <span className="bg-chacha-yellow text-chacha-black rounded-full px-2 py-0.5 text-xs font-bold">
               {Object.values(filters).filter(v => v !== '').length}
             </span>
           )}
@@ -62,7 +63,7 @@ export default function NewCarsFilters() {
       </div>
 
       {isOpen && (
-        <div className="card-dark p-4 grid grid-cols-1 md:grid-cols-5 gap-4">
+        <div className="card-dark p-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {/* Body Type */}
           <div>
             <label className="text-chacha-muted text-xs mb-1 block">Body Type</label>
@@ -131,6 +132,27 @@ export default function NewCarsFilters() {
               <option value="Manual">Manual</option>
               <option value="Automatic">Automatic</option>
               <option value="CVT">CVT</option>
+            </select>
+          </div>
+
+          {/* Rating Filter */}
+          <div>
+            <label className="text-chacha-muted text-xs mb-1 block flex items-center gap-1">
+              <Star size={12} className="text-chacha-yellow" />
+              Min Rating
+            </label>
+            <select
+              value={filters.minRating}
+              onChange={(e) => handleFilterChange('minRating', e.target.value)}
+              className="w-full bg-chacha-black border border-chacha-border rounded-lg px-3 py-2 text-white text-sm focus:border-chacha-yellow focus:outline-none"
+            >
+              <option value="">All Ratings</option>
+              <option value="4.5">4.5+ Stars</option>
+              <option value="4">4+ Stars</option>
+              <option value="3.5">3.5+ Stars</option>
+              <option value="3">3+ Stars</option>
+              <option value="2">2+ Stars</option>
+              <option value="1">1+ Stars</option>
             </select>
           </div>
         </div>

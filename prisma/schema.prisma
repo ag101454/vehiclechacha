@@ -52,6 +52,9 @@ model Vehicle {
   features     String   @default("[]")
   pros         String   @default("[]")
   cons         String   @default("[]")
+  reviews      Review[]
+  averageRating Float   @default(0)
+  totalReviews  Int     @default(0)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -59,6 +62,27 @@ model Vehicle {
   @@index([bodyType])
   @@index([price])
   @@index([isPopular])
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  vehicleId String
+  vehicle   Vehicle  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  userName  String
+  email     String
+  rating    Int
+  title     String?
+  review    String
+  pros      String?
+  cons      String?
+  isVerified Boolean @default(false)
+  isApproved Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([vehicleId, email])
+  @@index([vehicleId])
+  @@index([rating])
 }
 
 model Guide {

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Save, ArrowLeft, Plus, X } from 'lucide-react';
 import MultiImageUpload from '@/components/admin/MultiImageUpload';
+import { generateCarDescription, generatePros, generateCons } from '@/lib/descriptionGenerator';
 
 export default function AddVehiclePage() {
   const router = useRouter();
@@ -47,6 +48,26 @@ export default function AddVehiclePage() {
   const [newPro, setNewPro] = useState('');
   const [cons, setCons] = useState([]);
   const [newCon, setNewCon] = useState('');
+
+  const handleGenerateDescription = () => {
+    const car = {
+      brand: { name: formData.brand },
+      bodyType: formData.bodyType,
+      price: parseFloat(formData.price),
+      fuelEconomy: formData.fuelEconomy,
+      engine: formData.engine,
+      seats: parseInt(formData.seats),
+      horsepower: parseInt(formData.horsepower),
+    };
+    
+    const description = generateCarDescription(car);
+    const generatedPros = generatePros(car);
+    const generatedCons = generateCons(car);
+    
+    setFormData({ ...formData, description });
+    setPros(generatedPros);
+    setCons(generatedCons);
+  };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;

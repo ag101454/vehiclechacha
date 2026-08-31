@@ -3,7 +3,7 @@ import Footer from '@/components/layout/Footer';
 import CarCard from '@/components/cars/CarCard';
 import NewCarsFilters from '@/components/cars/NewCarsFilters';
 import { prisma } from '@/lib/db';
-import { Car as CarIcon } from 'lucide-react';
+import { Car as CarIcon, Star } from 'lucide-react';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
@@ -21,9 +21,6 @@ async function getVehicles(searchParams) {
     if (searchParams?.bodyType) {
       where.bodyType = searchParams.bodyType;
     }
-    if (searchParams?.brand) {
-      where.brand = { slug: searchParams.brand };
-    }
     if (searchParams?.minPrice || searchParams?.maxPrice) {
       where.price = {};
       if (searchParams.minPrice) where.price.gte = parseFloat(searchParams.minPrice);
@@ -34,6 +31,9 @@ async function getVehicles(searchParams) {
     }
     if (searchParams?.transmission) {
       where.transmission = searchParams.transmission;
+    }
+    if (searchParams?.minRating) {
+      where.averageRating = { gte: parseFloat(searchParams.minRating) };
     }
 
     const vehicles = await prisma.vehicle.findMany({
@@ -55,6 +55,8 @@ async function getVehicles(searchParams) {
       image: v.image,
       isPopular: v.isPopular,
       slug: v.slug,
+      averageRating: v.averageRating || 0,
+      totalReviews: v.totalReviews || 0,
     }));
   } catch (error) {
     console.error('Error fetching vehicles:', error);
@@ -68,9 +70,9 @@ export default async function NewCarsPage({ searchParams }) {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen py-12">
+      <main className="min-h-screen pt-20 md:pt-24 pb-12">
         <div className="container-custom">
-          <div className="mb-12">
+          <div className="mb-10">
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
               New Cars in <span className="text-chacha-yellow">Pakistan</span>
             </h1>
@@ -93,11 +95,26 @@ export default async function NewCarsPage({ searchParams }) {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {cars.map((car) => (
-                <CarCard key={car.id} car={car} />
-              ))}
-            </div>
+            <>
+              {/* Results Count */}
+              <div className="flex items-center justify-between mb-4">
+                <p className="text-chacha-muted text-sm">
+                  Showing <span className="text-chacha-yellow font-semibold">{cars.length}</span> cars
+                  {searchParams?.minRating && (
+                    <span className="ml-2 inline-flex items-center gap-1">
+                      with <Star size={14} className="fill-chacha-yellow text-chacha-yellow" />
+                      <span className="text-chacha-yellow">{searchParams.minRating}+ rating</span>
+                    </span>
+                  )}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {cars.map((car) => (
+                  <CarCard key={car.id} car={car} />
+                ))}
+              </div>
+            </>
           )}
         </div>
       </main>

@@ -31,7 +31,7 @@ export default function Loading() {
             repeat: Infinity,
           }}
         >
-          VehcilwChacha is loading...
+          VehcileChacha is loading...
         </motion.p>
 
         <div className="w-48 h-1.5 bg-chacha-card rounded-full overflow-hidden mt-4 mx-auto">

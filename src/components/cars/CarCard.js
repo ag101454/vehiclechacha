@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Fuel, Users, Settings, Car as CarIcon } from 'lucide-react';
+import { Fuel, Users, Settings, Car as CarIcon, Star } from 'lucide-react';
 
 export function formatPrice(price) {
   if (!price) return "Price not available";
@@ -47,6 +47,16 @@ export default function CarCard({ car }) {
             <CarIcon size={48} className="text-chacha-muted group-hover:text-chacha-yellow transition-colors" />
           </div>
         )}
+
+        {/* Rating Badge on Image */}
+        {car.averageRating > 0 && (
+          <div className="absolute top-2 right-2 bg-chacha-black/80 backdrop-blur rounded-full px-2 py-1 flex items-center gap-1">
+            <Star size={12} className="fill-chacha-yellow text-chacha-yellow" />
+            <span className="text-white text-xs font-semibold">
+              {car.averageRating.toFixed(1)}
+            </span>
+          </div>
+        )}
       </div>
 
       <div className="p-4">
@@ -68,7 +78,33 @@ export default function CarCard({ car }) {
         <h3 className="text-white font-semibold text-lg group-hover:text-chacha-yellow transition-colors">
           {car.name}
         </h3>
-        <p className="text-chacha-muted text-sm mb-3">{car.brand}</p>
+        <p className="text-chacha-muted text-sm mb-2">{car.brand}</p>
+
+        {/* Rating Stars */}
+        {car.averageRating > 0 ? (
+          <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center gap-0.5">
+              {[...Array(5)].map((_, i) => (
+                <Star
+                  key={i}
+                  size={14}
+                  className={i < Math.round(car.averageRating) ? 'fill-chacha-yellow text-chacha-yellow' : 'text-chacha-border'}
+                />
+              ))}
+            </div>
+            <span className="text-chacha-yellow text-sm font-semibold">
+              {car.averageRating.toFixed(1)}
+            </span>
+            <span className="text-chacha-muted text-xs">
+              ({car.totalReviews || 0})
+            </span>
+          </div>
+        ) : (
+          <div className="flex items-center gap-1 mb-2">
+            <Star size={14} className="text-chacha-border" />
+            <span className="text-chacha-muted text-xs">No reviews yet</span>
+          </div>
+        )}
 
         {/* Price */}
         <div className="text-chacha-yellow font-bold text-xl mb-3">

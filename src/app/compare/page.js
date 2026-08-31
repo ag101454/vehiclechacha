@@ -3,6 +3,9 @@ import Footer from '@/components/layout/Footer';
 import CompareSelector from '@/components/comparison/CompareSelector';
 import { prisma } from '@/lib/db';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export const metadata = {
   title: 'Compare Cars in Pakistan | VehicleChacha',
   description: 'Compare new cars in Pakistan side by side. Compare prices, specifications, and features.',
@@ -28,9 +31,10 @@ export default async function ComparePage() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen py-12">
+      {/* Added pt-20 md:pt-24 for spacing */}
+      <main className="min-h-screen pt-20 md:pt-24 pb-12">
         <div className="container-custom">
-          <div className="text-center mb-12">
+          <div className="text-center mb-10">
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
               Compare <span className="text-chacha-yellow">Cars</span>
             </h1>

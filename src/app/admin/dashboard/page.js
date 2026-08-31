@@ -14,7 +14,9 @@ import {
   FileText,
   Tag,
   Menu,
-  X
+  X,
+  Star,
+  LayoutDashboard
 } from 'lucide-react';
 
 export default function AdminDashboard() {
@@ -24,7 +26,6 @@ export default function AdminDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   useEffect(() => {
-    // Check if admin is authenticated
     const checkAuth = async () => {
       try {
         const response = await fetch('/api/admin/verify');
@@ -46,7 +47,6 @@ export default function AdminDashboard() {
   }, [router]);
 
   const handleLogout = async () => {
-    await fetch('/api/admin/logout');
     document.cookie = 'admin_token=; path=/; max-age=0';
     router.push('/admin/login');
   };
@@ -64,18 +64,20 @@ export default function AdminDashboard() {
   }
 
   const stats = [
-    { label: 'Total Vehicles', value: '8', icon: Car, color: 'text-chacha-yellow' },
-    { label: 'Brands', value: '5', icon: Tag, color: 'text-blue-500' },
-    { label: 'Guides', value: '0', icon: FileText, color: 'text-green-500' },
-    { label: 'Users', value: '1', icon: Users, color: 'text-purple-500' },
+    { label: 'Total Vehicles', value: '0', icon: Car, color: 'text-chacha-yellow' },
+    { label: 'Brands', value: '0', icon: Tag, color: 'text-blue-500' },
+    { label: 'Reviews', value: '0', icon: Star, color: 'text-green-500' },
+    { label: 'Guides', value: '0', icon: FileText, color: 'text-purple-500' },
   ];
 
   const menuItems = [
-    { label: 'Dashboard', href: '/admin/dashboard', icon: BarChart3, active: true },
-    { label: 'Vehicles', href: '/admin/dashboard/vehicles', icon: Car, active: false },
-    { label: 'Brands', href: '/admin/dashboard/brands', icon: Tag, active: false },
-    { label: 'Guides', href: '/admin/dashboard/guides', icon: FileText, active: false },
-    { label: 'Settings', href: '/admin/dashboard/settings', icon: Settings, active: false },
+    { label: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
+    { label: 'Vehicles', href: '/admin/dashboard/vehicles', icon: Car },
+    { label: 'Add Vehicle', href: '/admin/dashboard/vehicles/new', icon: Plus },
+    { label: 'Reviews', href: '/admin/dashboard/reviews', icon: Star },
+    { label: 'Brands', href: '/admin/dashboard/brands', icon: Tag },
+    { label: 'Guides', href: '/admin/dashboard/guides', icon: FileText },
+    { label: 'Settings', href: '/admin/dashboard/settings', icon: Settings },
   ];
 
   return (
@@ -84,6 +86,7 @@ export default function AdminDashboard() {
       <motion.aside
         initial={false}
         animate={{ width: sidebarOpen ? 256 : 80 }}
+        transition={{ duration: 0.3 }}
         className="bg-chacha-card border-r border-chacha-border fixed h-full z-20"
       >
         <div className="p-4 flex items-center justify-between">
@@ -110,11 +113,7 @@ export default function AdminDashboard() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 px-4 py-3 transition-colors ${
-                item.active
-                  ? 'bg-chacha-yellow/10 text-chacha-yellow border-r-2 border-chacha-yellow'
-                  : 'text-chacha-muted hover:text-white hover:bg-chacha-black'
-              }`}
+              className="flex items-center gap-3 px-4 py-3 text-chacha-muted hover:text-white hover:bg-chacha-black transition-colors"
             >
               <item.icon size={20} />
               {sidebarOpen && <span>{item.label}</span>}
@@ -134,7 +133,6 @@ export default function AdminDashboard() {
       {/* Main Content */}
       <main className={`flex-1 ${sidebarOpen ? 'ml-64' : 'ml-20'} transition-all duration-300`}>
         <div className="p-8">
-          {/* Header */}
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1 className="text-3xl font-bold text-white">Dashboard</h1>
@@ -166,12 +164,20 @@ export default function AdminDashboard() {
             ))}
           </div>
 
-          {/* Recent Activity */}
-          <div className="card-dark p-6">
-            <h2 className="text-xl font-bold text-white mb-4">Recent Activity</h2>
-            <div className="text-chacha-muted text-center py-8">
-              No recent activity
-            </div>
+          {/* Quick Links */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Link href="/admin/dashboard/vehicles/new" className="card-dark p-6 hover:border-chacha-yellow transition-all text-center">
+              <Plus className="text-chacha-yellow mx-auto mb-2" size={32} />
+              <div className="text-white font-semibold">Add Vehicle</div>
+            </Link>
+            <Link href="/admin/dashboard/vehicles" className="card-dark p-6 hover:border-chacha-yellow transition-all text-center">
+              <Car className="text-chacha-yellow mx-auto mb-2" size={32} />
+              <div className="text-white font-semibold">Manage Vehicles</div>
+            </Link>
+            <Link href="/admin/dashboard/reviews" className="card-dark p-6 hover:border-chacha-yellow transition-all text-center">
+              <Star className="text-chacha-yellow mx-auto mb-2" size={32} />
+              <div className="text-white font-semibold">View Reviews</div>
+            </Link>
           </div>
         </div>
       </main>

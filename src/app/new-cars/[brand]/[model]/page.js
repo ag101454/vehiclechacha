@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { prisma } from '@/lib/db';
 import CarGallery from '@/components/cars/CarGallery';
+import ReviewSection from '@/components/reviews/ReviewSection';
 
 export async function generateMetadata({ params }) {
   const { brand, model } = params;
@@ -305,6 +306,7 @@ export default async function CarDetailPage({ params }) {
                   </Link>
                 ))}
               </div>
+              <ReviewSection vehicleId={vehicle.id} vehicleName={`${vehicle.brand.name} ${vehicle.name}`} />
             </div>
           )}
         </div>

@@ -2,7 +2,9 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import Link from 'next/link';
 import { prisma } from '@/lib/db';
-import { TrendingUp, TrendingDown } from 'lucide-react';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export const metadata = {
   title: 'Car Prices in Pakistan - Updated Price List | VehicleChacha',
@@ -20,7 +22,6 @@ async function getAllVehicles() {
       ],
     });
 
-    // Group by brand
     const grouped = {};
     vehicles.forEach(vehicle => {
       const brandName = vehicle.brand.name;
@@ -52,9 +53,10 @@ export default async function CarPricesPage() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen py-12">
+      {/* Added pt-20 md:pt-24 for spacing */}
+      <main className="min-h-screen pt-20 md:pt-24 pb-12">
         <div className="container-custom">
-          <div className="mb-12">
+          <div className="mb-10">
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
               Car Prices in <span className="text-chacha-yellow">Pakistan</span>
             </h1>
