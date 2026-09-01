@@ -3,9 +3,10 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Save, ArrowLeft, Plus, X } from 'lucide-react';
+import { Save, ArrowLeft, Plus, X, Sparkles } from 'lucide-react';
 import MultiImageUpload from '@/components/admin/MultiImageUpload';
 import { generateCarDescription, generatePros, generateCons } from '@/lib/descriptionGenerator';
+import FeatureChecklist from '@/components/admin/FeatureChecklist';
 
 export default function EditVehiclePage() {
   const router = useRouter();
@@ -45,7 +46,6 @@ export default function EditVehiclePage() {
   });
 
   const [features, setFeatures] = useState([]);
-  const [newFeature, setNewFeature] = useState('');
   const [pros, setPros] = useState([]);
   const [newPro, setNewPro] = useState('');
   const [cons, setCons] = useState([]);
@@ -83,7 +83,6 @@ export default function EditVehiclePage() {
       if (response.ok && data.vehicle) {
         const vehicle = data.vehicle;
         
-        // Parse images
         let imagesArray = [];
         try {
           imagesArray = JSON.parse(vehicle.images || '[]');
@@ -91,7 +90,6 @@ export default function EditVehiclePage() {
           imagesArray = vehicle.image ? [vehicle.image] : [];
         }
         
-        // Parse features, pros, cons
         let featuresArray = [];
         let prosArray = [];
         let consArray = [];
@@ -156,17 +154,6 @@ export default function EditVehiclePage() {
       images: urls,
       image: urls.length > 0 ? urls[0] : '',
     });
-  };
-
-  const addFeature = () => {
-    if (newFeature.trim()) {
-      setFeatures([...features, newFeature.trim()]);
-      setNewFeature('');
-    }
-  };
-
-  const removeFeature = (index) => {
-    setFeatures(features.filter((_, i) => i !== index));
   };
 
   const addPro = () => {
@@ -375,34 +362,29 @@ export default function EditVehiclePage() {
           {/* Vehicle Images */}
           <div className="card-dark p-6">
             <h2 className="text-xl font-bold text-white mb-4">Vehicle Images</h2>
-            <MultiImageUpload 
-              images={formData.images} 
-              onChange={handleImagesChange}
-              maxImages={3}
-            />
+            <MultiImageUpload images={formData.images} onChange={handleImagesChange} maxImages={3} />
           </div>
 
           {/* Description */}
           <div className="card-dark p-6">
-            <h2 className="text-xl font-bold text-white mb-4">Description</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold text-white">Description</h2>
+              <button
+                type="button"
+                onClick={handleGenerateDescription}
+                className="inline-flex items-center gap-1 text-chacha-yellow text-sm hover:text-yellow-400"
+              >
+                <Sparkles size={14} />
+                Auto Generate
+              </button>
+            </div>
             <textarea name="description" value={formData.description} onChange={handleChange} rows={4} className={inputClass} />
           </div>
 
-          {/* Features */}
+          {/* Feature Checklist */}
           <div className="card-dark p-6">
-            <h2 className="text-xl font-bold text-white mb-4">Features</h2>
-            <div className="flex gap-2 mb-4">
-              <input type="text" value={newFeature} onChange={(e) => setNewFeature(e.target.value)} onKeyPress={(e) => { if (e.key === 'Enter') { e.preventDefault(); addFeature(); } }} className={inputClass} placeholder="Add a feature..." />
-              <button type="button" onClick={addFeature} className="btn-primary px-4 py-2"><Plus size={20} /></button>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {features.map((feature, index) => (
-                <span key={index} className="inline-flex items-center gap-1 bg-chacha-black border border-chacha-border rounded-full px-3 py-1 text-sm text-white">
-                  {feature}
-                  <button type="button" onClick={() => removeFeature(index)} className="text-chacha-muted hover:text-red-500"><X size={14} /></button>
-                </span>
-              ))}
-            </div>
+            <h2 className="text-xl font-bold text-white mb-4">Vehicle Features</h2>
+            <FeatureChecklist selectedFeatures={features} onChange={setFeatures} />
           </div>
 
           {/* Pros */}
