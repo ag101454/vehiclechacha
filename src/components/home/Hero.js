@@ -136,9 +136,10 @@ export default function Hero() {
                 src="/images/logo/vehiclechacha-logo.png"
                 alt="VehicleChacha Logo"
                 fill
+                sizes="(max-width: 768px) 200px, (max-width: 1200px) 420px, 500px"
                 className="object-contain drop-shadow-2xl"
                 priority
-              />
+                />
             </motion.div>
           </motion.div>
 
