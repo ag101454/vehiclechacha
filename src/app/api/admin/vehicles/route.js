@@ -1,11 +1,26 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 
+// GET - Fetch all vehicles
+export async function GET() {
+  try {
+    const vehicles = await prisma.vehicle.findMany({
+      include: { brand: true },
+      orderBy: { createdAt: 'desc' },
+    });
+    return NextResponse.json({ vehicles });
+  } catch (error) {
+    console.error('GET error:', error);
+    return NextResponse.json({ message: error.message }, { status: 500 });
+  }
+}
+
+// POST - Create new vehicle
 export async function POST(request) {
   try {
     const data = await request.json();
     
-    // TRIM the brand name to remove spaces
+    // TRIM the brand name
     const brandName = (data.brand || '').trim();
     
     if (!brandName) {
@@ -14,7 +29,7 @@ export async function POST(request) {
     
     console.log('Creating vehicle with brand:', brandName);
 
-    // Find brand (case-insensitive, trimmed)
+    // Find brand - case insensitive, check for trailing spaces too
     let brand = await prisma.brand.findFirst({
       where: {
         name: {
@@ -24,19 +39,41 @@ export async function POST(request) {
       },
     });
 
+    // If not found, also try to find by checking if any brand name contains this name
     if (!brand) {
-      // Create slug from trimmed name
-      const slug = brandName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-      
-      brand = await prisma.brand.create({
-        data: {
-          name: brandName,
-          slug: slug,
+      brand = await prisma.brand.findFirst({
+        where: {
+          OR: [
+            { name: { contains: brandName, mode: 'insensitive' } },
+            { slug: brandName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') },
+          ],
         },
       });
-      console.log('Created new brand:', brandName, 'with slug:', slug);
+    }
+
+    // If still not found, create new brand
+    if (!brand) {
+      const slug = brandName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+      
+      // Check if slug exists (with different name)
+      const existingSlug = await prisma.brand.findUnique({ where: { slug } });
+      
+      if (existingSlug) {
+        // Use existing brand with this slug
+        brand = existingSlug;
+        console.log('Found brand by slug:', brand.name);
+      } else {
+        // Create new brand
+        brand = await prisma.brand.create({
+          data: {
+            name: brandName,
+            slug: slug,
+          },
+        });
+        console.log('Created new brand:', brandName, 'with slug:', slug);
+      }
     } else {
-      console.log('Found existing brand:', brand.name);
+      console.log('Found existing brand:', brand.name, '| ID:', brand.id);
     }
 
     // Create vehicle
@@ -76,7 +113,7 @@ export async function POST(request) {
       include: { brand: true },
     });
 
-    console.log('✅ Vehicle created under brand:', brandName);
+    console.log('✅ Vehicle created:', vehicle.name, 'under brand:', brand.name);
     return NextResponse.json({ success: true, vehicle });
 
   } catch (error) {
