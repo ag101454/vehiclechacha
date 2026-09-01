@@ -1,19 +1,18 @@
 export default function robots() {
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
-  
     return {
       rules: [
         {
           userAgent: '*',
           allow: '/',
-          disallow: [
-            '/admin/',
-            '/api/admin/',
-            '/api/upload/',
-          ],
+          disallow: ['/admin/', '/api/admin/', '/api/upload/'],
+        },
+        {
+          userAgent: 'Googlebot',
+          allow: '/',
+          disallow: ['/admin/', '/api/admin/'],
         },
       ],
-      sitemap: `${baseUrl}/sitemap.xml`,
+      sitemap: 'https://vehiclechacha.vercel.app/sitemap.xml',
+      host: 'https://vehiclechacha.vercel.app',
     };
   }
-  

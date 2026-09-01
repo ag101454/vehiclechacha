@@ -15,8 +15,9 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export const metadata = {
-  title: 'VehicleChacha - New Cars in Pakistan | Compare Prices & Find Your Car',
-  description: 'Find the right car for your budget. Compare new cars in Pakistan, check prices and specifications. Budget Batao, Gaari Chacha Dhoondhega.',
+  title: 'New Cars in Pakistan 2026 - Compare Prices & Find Your Car | VehicleChacha',
+  description: 'Compare new cars in Pakistan. Check latest Toyota, Honda, Suzuki, Kia, Hyundai prices. Read reviews, compare specs, and get Chacha\'s personalized recommendation based on your budget.',
+  keywords: 'new cars Pakistan 2026, car prices Pakistan, best cars Pakistan, buy car Pakistan, car comparison Pakistan',
 };
 
 export default async function HomePage() {

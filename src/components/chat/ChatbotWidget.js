@@ -88,10 +88,9 @@ export default function ChatbotWidget() {
       {/* Chat Button */}
       <motion.button
         onClick={() => setIsOpen(!isOpen)}
+        aria-label={isOpen ? 'Close Chat' : 'Open Chat Assistant'}
         className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-chacha-yellow rounded-full flex items-center justify-center shadow-2xl shadow-chacha-yellow/30 hover:scale-110 transition-all"
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-      >
+        >
         {isOpen ? <X size={24} className="text-chacha-black" /> : <MessageCircle size={24} className="text-chacha-black" />}
       </motion.button>
 

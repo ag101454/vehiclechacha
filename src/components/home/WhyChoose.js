@@ -69,7 +69,7 @@ export default function WhyChoose() {
               className={`card-dark p-6 border ${feature.borderColor} transition-all duration-300 group hover:shadow-2xl hover:shadow-black/30 hover:-translate-y-1.5`}
             >
               {/* Number */}
-              <div className="text-4xl font-bold text-chacha-border mb-4 group-hover:text-chacha-yellow/30 transition-colors">
+              <div className="text-4xl font-bold text-chacha-muted mb-4 group-hover:text-chacha-yellow/30 transition-colors">
                 {String(index + 1).padStart(2, '0')}
               </div>
 

@@ -107,11 +107,12 @@ export default function Navbar() {
             >
               <Image
                 src="/images/logo/vehiclechacha-logo.png"
-                alt="VehicleChacha"
+                alt="VehicleChacha Logo"
                 fill
+                sizes="(max-width: 768px) 48px, 56px"
                 className="object-contain"
                 priority
-              />
+                />
             </motion.div>
             <div className="hidden sm:block leading-tight">
               <span className="text-white font-bold text-lg tracking-tight">

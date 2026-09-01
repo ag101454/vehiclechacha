@@ -1,0 +1,26 @@
+# VehicleChacha - Pakistan's Trusted Car Advisor
+
+> Find the right car for your budget in Pakistan. Compare new cars, check prices, read reviews, and get personalized recommendations.
+
+## Main Pages
+
+- [Homepage](https://vehiclechacha.vercel.app) - Find cars by budget
+- [New Cars](https://vehiclechacha.vercel.app/new-cars) - Browse all new cars in Pakistan
+- [Car Prices](https://vehiclechacha.vercel.app/car-prices) - Latest car prices in Pakistan
+- [Compare Cars](https://vehiclechacha.vercel.app/compare) - Side-by-side car comparison
+- [Find My Car](https://vehiclechacha.vercel.app/find-my-car) - Personalized car recommendation wizard
+- [Guides](https://vehiclechacha.vercel.app/guides) - Car buying guides for Pakistan
+- [How We Score](https://vehiclechacha.vercel.app/how-we-score) - Chacha Match™ scoring methodology
+
+## Budget Categories
+
+- [Under 20 Lakh](https://vehiclechacha.vercel.app/best-cars/under-20-lakh)
+- [Under 30 Lakh](https://vehiclechacha.vercel.app/best-cars/under-30-lakh)
+- [Under 40 Lakh](https://vehiclechacha.vercel.app/best-cars/under-40-lakh)
+- [Under 50 Lakh](https://vehiclechacha.vercel.app/best-cars/under-50-lakh)
+- [Under 70 Lakh](https://vehiclechacha.vercel.app/best-cars/under-70-lakh)
+- [70 Lakh Plus](https://vehiclechacha.vercel.app/best-cars/70-lakh-plus)
+
+## About
+
+VehicleChacha helps Pakistani car buyers find the right new car based on budget, family size, driving habits, and preferences. We provide transparent scoring (Chacha Match™), real-time prices, user reviews, and expert guidance.

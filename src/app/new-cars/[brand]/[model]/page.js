@@ -9,6 +9,8 @@ import {
 import { prisma } from '@/lib/db';
 import CarGallery from '@/components/cars/CarGallery';
 import ReviewSection from '@/components/reviews/ReviewSection';
+import VehicleSchema from '@/components/seo/VehicleSchema';
+import BreadcrumbSchema from '@/components/seo/BreadcrumbSchema';
 
 export const dynamic = 'force-dynamic';
 
@@ -82,6 +84,15 @@ export default async function CarDetailPage({ params }) {
 
   return (
     <>
+    
+        <VehicleSchema vehicle={vehicle} />
+        <BreadcrumbSchema items={[
+        { name: 'Home', url: '/' },
+        { name: 'New Cars', url: '/new-cars' },
+        { name: vehicle.brand.name, url: `/new-cars/${vehicle.brand.slug}` },
+        { name: vehicle.name, url: `/new-cars/${vehicle.brand.slug}/${vehicle.slug}` },
+        ]} />
+
       <Navbar />
       <main className="min-h-screen pt-20 md:pt-24 pb-12">
         <div className="container-custom">
