@@ -96,3 +96,21 @@ model Guide {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model MashwaraRequest {
+  id          String   @id @default(cuid())
+  name        String
+  phone       String
+  email       String?
+  budgetMin   Float?
+  budgetMax   Float?
+  bodyType    String?
+  familySize  String?
+  message     String?
+  paymentStatus String @default("pending") // pending, paid, verified, rejected
+  transactionId String?
+  screenshot   String?  // NEW: Payment screenshot
+  adminNote    String?  // NEW: Admin notes
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { ArrowRight, Car, CheckCircle, Sparkles, TrendingUp } from 'lucide-react';
 import { prisma } from '@/lib/db';
 import FaqSection from '@/components/home/FaqSection';
+import MashwaraSection from '@/components/home/MashwaraSection';
 
 // Force dynamic rendering - Always fetch fresh data
 export const dynamic = 'force-dynamic';
@@ -37,8 +38,10 @@ export default async function HomePage() {
         <PopularCars />
         <BudgetSection />
         <BrandShowcase />
+        <MashwaraSection />
         <WhyChoose />
         <FaqSection />
+        <MashwaraSection />
         
         <section className="py-20 bg-chacha-card/30 relative overflow-hidden">
           <div className="absolute inset-0 opacity-5" style={{

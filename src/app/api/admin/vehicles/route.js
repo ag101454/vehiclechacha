@@ -1,43 +1,50 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 
-export async function GET() {
-  try {
-    const vehicles = await prisma.vehicle.findMany({
-      include: { brand: true },
-      orderBy: { createdAt: 'desc' },
-    });
-    return NextResponse.json({ vehicles });
-  } catch (error) {
-    console.error('GET error:', error);
-    return NextResponse.json({ message: error.message }, { status: 500 });
-  }
-}
-
 export async function POST(request) {
   try {
     const data = await request.json();
-    console.log('Creating vehicle with data:', data);
-    console.log('isPopular value:', data.isPopular, 'type:', typeof data.isPopular);
+    
+    // TRIM the brand name to remove spaces
+    const brandName = (data.brand || '').trim();
+    
+    if (!brandName) {
+      return NextResponse.json({ message: 'Brand name required' }, { status: 400 });
+    }
+    
+    console.log('Creating vehicle with brand:', brandName);
 
+    // Find brand (case-insensitive, trimmed)
     let brand = await prisma.brand.findFirst({
-      where: { name: data.brand },
+      where: {
+        name: {
+          equals: brandName,
+          mode: 'insensitive',
+        },
+      },
     });
 
     if (!brand) {
+      // Create slug from trimmed name
+      const slug = brandName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+      
       brand = await prisma.brand.create({
         data: {
-          name: data.brand,
-          slug: data.brand.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+          name: brandName,
+          slug: slug,
         },
       });
+      console.log('Created new brand:', brandName, 'with slug:', slug);
+    } else {
+      console.log('Found existing brand:', brand.name);
     }
 
+    // Create vehicle
     const vehicle = await prisma.vehicle.create({
       data: {
         brandId: brand.id,
-        name: data.name,
-        slug: data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+        name: (data.name || '').trim(),
+        slug: (data.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''),
         bodyType: data.bodyType || 'Sedan',
         price: Number(data.price) || 0,
         oldPrice: data.oldPrice ? Number(data.oldPrice) : null,
@@ -69,11 +76,11 @@ export async function POST(request) {
       include: { brand: true },
     });
 
-    console.log('Vehicle created:', vehicle.name, 'isPopular:', vehicle.isPopular);
-    return NextResponse.json({ success: true, message: 'Vehicle added successfully', vehicle });
+    console.log('✅ Vehicle created under brand:', brandName);
+    return NextResponse.json({ success: true, vehicle });
 
   } catch (error) {
-    console.error('POST error:', error.message);
+    console.error('Error:', error.message);
     return NextResponse.json({ success: false, message: error.message }, { status: 500 });
   }
 }

@@ -3,10 +3,11 @@ import Footer from '@/components/layout/Footer';
 import CarCard from '@/components/cars/CarCard';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Car as CarIcon, ArrowRight } from 'lucide-react';
+import { Car as CarIcon, ArrowRight, Star } from 'lucide-react';
 import { prisma } from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function generateMetadata({ params }) {
   try {
@@ -14,15 +15,15 @@ export async function generateMetadata({ params }) {
       where: { slug: params.brand },
     });
     return {
-      title: brand ? `${brand.name} Cars in Pakistan - Prices & Specs | VehicleChacha` : 'Brand Not Found',
-      description: brand ? `Browse all ${brand.name} cars in Pakistan.` : '',
+      title: brand ? `${brand.name} Cars in Pakistan - All Models & Prices | VehicleChacha` : 'Brand Not Found',
+      description: brand ? `Browse all ${brand.name} cars in Pakistan. Compare prices, specifications, features, and reviews.` : '',
     };
   } catch {
     return { title: 'Brand | VehicleChacha' };
   }
 }
 
-async function getBrandWithVehicles(slug) {
+async function getBrandWithAllVehicles(slug) {
   try {
     const brand = await prisma.brand.findUnique({
       where: { slug },
@@ -30,7 +31,12 @@ async function getBrandWithVehicles(slug) {
         vehicles: {
           where: { isAvailable: true },
           include: { brand: true },
-          orderBy: { price: 'asc' },
+          orderBy: [
+            { averageRating: 'desc' },
+            { totalReviews: 'desc' },
+            { price: 'asc' },
+          ],
+          // NO take/limit - gets ALL vehicles
         },
       },
     });
@@ -38,21 +44,6 @@ async function getBrandWithVehicles(slug) {
   } catch (error) {
     console.error('Error fetching brand:', error);
     return null;
-  }
-}
-
-async function getOtherBrands(currentBrandSlug) {
-  try {
-    const brands = await prisma.brand.findMany({
-      where: { slug: { not: currentBrandSlug } },
-      include: {
-        _count: { select: { vehicles: true } },
-      },
-      take: 5,
-    });
-    return brands;
-  } catch {
-    return [];
   }
 }
 
@@ -67,7 +58,7 @@ const brandLogos = {
 };
 
 export default async function BrandPage({ params }) {
-  const brand = await getBrandWithVehicles(params.brand);
+  const brand = await getBrandWithAllVehicles(params.brand);
 
   if (!brand) {
     return (
@@ -75,7 +66,6 @@ export default async function BrandPage({ params }) {
         <Navbar />
         <main className="min-h-screen pt-20 pb-12">
           <div className="container-custom text-center">
-            <div className="text-6xl mb-4">🚗</div>
             <h1 className="text-3xl font-bold text-white mb-4">Brand Not Found</h1>
             <Link href="/new-cars" className="btn-primary">Browse All Cars</Link>
           </div>
@@ -85,7 +75,6 @@ export default async function BrandPage({ params }) {
     );
   }
 
-  const otherBrands = await getOtherBrands(brand.slug);
   const brandLogo = brandLogos[brand.slug] || null;
 
   return (
@@ -106,7 +95,7 @@ export default async function BrandPage({ params }) {
           <div className="card-dark p-8 mb-8 text-center relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-r from-chacha-yellow/10 to-transparent" />
             <div className="relative z-10">
-              {/* Brand Logo */}
+              {/* Logo */}
               <div className="w-24 h-24 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg p-3">
                 {brandLogo ? (
                   <Image
@@ -134,7 +123,7 @@ export default async function BrandPage({ params }) {
               )}
               <div className="flex items-center justify-center gap-4 text-sm">
                 <span className="text-chacha-yellow font-semibold">
-                  {brand.vehicles.length} Cars Available
+                  {brand.vehicles.length} {brand.vehicles.length === 1 ? 'Car' : 'Cars'} Available
                 </span>
                 {brand.country && (
                   <span className="text-chacha-muted">| {brand.country}</span>
@@ -143,76 +132,51 @@ export default async function BrandPage({ params }) {
             </div>
           </div>
 
-          {/* Vehicles Grid */}
+          {/* ALL Vehicles Grid - No limit */}
           {brand.vehicles.length === 0 ? (
             <div className="card-dark p-16 text-center">
               <CarIcon className="mx-auto text-chacha-muted mb-4" size={64} />
               <h2 className="text-white text-2xl font-bold mb-2">No Cars Available</h2>
-              <p className="text-chacha-muted mb-6">{brand.name} cars will be added soon!</p>
+              <p className="text-chacha-muted mb-6">
+                {brand.name} cars will be added soon!
+              </p>
               <Link href="/new-cars" className="btn-primary inline-flex items-center gap-2">
                 Browse All Cars <ArrowRight size={18} />
               </Link>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {brand.vehicles.map((vehicle) => (
-                <CarCard
-                  key={vehicle.id}
-                  car={{
-                    id: vehicle.id,
-                    name: vehicle.name,
-                    brand: brand.name,
-                    brandSlug: brand.slug,
-                    slug: vehicle.slug,
-                    price: vehicle.price,
-                    bodyType: vehicle.bodyType,
-                    fuelType: vehicle.fuelType,
-                    transmission: vehicle.transmission,
-                    seats: vehicle.seats,
-                    image: vehicle.image,
-                    isPopular: vehicle.isPopular,
-                    averageRating: vehicle.averageRating || 0,
-                    totalReviews: vehicle.totalReviews || 0,
-                  }}
-                />
-              ))}
-            </div>
-          )}
+            <>
+              {/* Results count */}
+              <div className="flex items-center justify-between mb-4">
+                <p className="text-chacha-muted text-sm">
+                  Showing all <span className="text-chacha-yellow font-semibold">{brand.vehicles.length}</span> {brand.name} cars
+                </p>
+              </div>
 
-          {/* Other Brands */}
-          {otherBrands.length > 0 && (
-            <div className="mt-12">
-              <h3 className="text-white font-bold text-lg mb-4">Other Brands</h3>
-              <div className="flex flex-wrap gap-3">
-                {otherBrands.map((other) => (
-                  <Link
-                    key={other.id}
-                    href={`/new-cars/${other.slug}`}
-                    className="card-dark px-5 py-3 hover:border-chacha-yellow transition-all group flex items-center gap-2"
-                  >
-                    {brandLogos[other.slug] ? (
-                      <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center p-1">
-                        <Image
-                          src={brandLogos[other.slug]}
-                          alt={other.name}
-                          width={24}
-                          height={24}
-                          className="object-contain"
-                        />
-                      </div>
-                    ) : (
-                      <div className="w-8 h-8 bg-chacha-yellow/10 rounded-lg flex items-center justify-center">
-                        <span className="text-chacha-yellow font-bold text-sm">{other.name.charAt(0)}</span>
-                      </div>
-                    )}
-                    <span className="text-white font-semibold group-hover:text-chacha-yellow transition-colors">
-                      {other.name}
-                    </span>
-                    <span className="text-chacha-muted text-xs">({other._count?.vehicles || 0})</span>
-                  </Link>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {brand.vehicles.map((vehicle) => (
+                  <CarCard
+                    key={vehicle.id}
+                    car={{
+                      id: vehicle.id,
+                      name: vehicle.name,
+                      brand: brand.name,
+                      brandSlug: brand.slug,
+                      slug: vehicle.slug,
+                      price: vehicle.price,
+                      bodyType: vehicle.bodyType,
+                      fuelType: vehicle.fuelType,
+                      transmission: vehicle.transmission,
+                      seats: vehicle.seats,
+                      image: vehicle.image,
+                      isPopular: vehicle.isPopular,
+                      averageRating: vehicle.averageRating || 0,
+                      totalReviews: vehicle.totalReviews || 0,
+                    }}
+                  />
                 ))}
               </div>
-            </div>
+            </>
           )}
         </div>
       </main>

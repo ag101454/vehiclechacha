@@ -10,7 +10,6 @@ export default function WelcomeAnimation({ onComplete }) {
 
   useEffect(() => {
     const hasSeenIntro = sessionStorage.getItem('hasSeenIntro');
-    
     if (hasSeenIntro) {
       setShow(false);
       onComplete?.();
@@ -18,14 +17,14 @@ export default function WelcomeAnimation({ onComplete }) {
     }
 
     const timers = [
-      setTimeout(() => setPhase(1), 2500),  // Phase 1: Logo reveal complete
-      setTimeout(() => setPhase(2), 4500),  // Phase 2: Text reveal
-      setTimeout(() => setPhase(3), 6500),  // Phase 3: Final impact
+      setTimeout(() => setPhase(1), 2500),
+      setTimeout(() => setPhase(2), 4500),
+      setTimeout(() => setPhase(3), 6500),
       setTimeout(() => {
         setShow(false);
         sessionStorage.setItem('hasSeenIntro', 'true');
         onComplete?.();
-      }, 7500),
+      }, 9000),
     ];
 
     return () => timers.forEach(clearTimeout);
@@ -36,367 +35,281 @@ export default function WelcomeAnimation({ onComplete }) {
   return (
     <AnimatePresence>
       <motion.div
-        className="fixed inset-0 z-[100] bg-chacha-black overflow-hidden"
+        className="fixed inset-0 z-[100] overflow-hidden bg-black"
         initial={{ opacity: 1 }}
         exit={{ 
           opacity: 0,
-          filter: 'blur(10px)',
-          transition: { duration: 0.8, ease: [0.4, 0, 0.2, 1] }
+          scale: 1.08,
+          filter: 'brightness(3)',
+          transition: { duration: 1.2, ease: [0.76, 0, 0.24, 1] }
         }}
       >
-        {/* ===== BACKGROUND EFFECTS ===== */}
-        
-        {/* Radial Spotlight */}
-        <motion.div
+        {/* ===== LAYER 1: VIGNETTE ===== */}
+        <div 
           className="absolute inset-0"
           style={{
-            background: 'radial-gradient(ellipse at center, rgba(255,196,0,0.15) 0%, rgba(255,196,0,0.05) 30%, transparent 70%)',
-          }}
-          animate={{
-            scale: [0.8, 1.2, 1.5, 2],
-            opacity: [0, 1, 0.6, 0],
-          }}
-          transition={{
-            duration: 7,
-            times: [0, 0.4, 0.7, 1],
-            ease: "easeInOut",
+            background: 'radial-gradient(ellipse at center, transparent 20%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0.9) 100%)',
           }}
         />
 
-        {/* Particle Effects */}
-        {[...Array(20)].map((_, i) => (
+        {/* ===== LAYER 2: GOLDEN GLOW ===== */}
+        <motion.div
+          className="absolute inset-0"
+          style={{
+            background: 'radial-gradient(ellipse at center, rgba(255,196,0,0.12) 0%, transparent 40%)',
+          }}
+          animate={{
+            opacity: [0, 1, 0.6, 0],
+            scale: [0.6, 1.3, 1.8, 2.5],
+          }}
+          transition={{ duration: 9, times: [0, 0.3, 0.6, 1], ease: 'easeInOut' }}
+        />
+
+        {/* ===== LAYER 3: FLOATING GOLD DUST ===== */}
+        {[...Array(50)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-1 h-1 bg-chacha-yellow rounded-full"
+            className="absolute rounded-full"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
+              width: Math.random() * 2.5 + 0.5,
+              height: Math.random() * 2.5 + 0.5,
+              backgroundColor: '#FFC400',
+              filter: 'blur(0.5px)',
+              boxShadow: '0 0 10px rgba(255,196,0,0.8)',
             }}
             animate={{
-              y: [0, -100 - Math.random() * 200],
-              x: [0, (Math.random() - 0.5) * 100],
-              opacity: [0, 1, 0],
+              y: [0, -Math.random() * 400 - 100],
+              opacity: [0, 0.6, 0],
               scale: [0, 1, 0],
             }}
             transition={{
-              duration: 2 + Math.random() * 3,
+              duration: Math.random() * 5 + 3,
               delay: Math.random() * 3,
               repeat: Infinity,
-              ease: "easeOut",
+              ease: 'linear',
             }}
           />
         ))}
 
-        {/* Animated Road */}
+        {/* ===== LAYER 4: LIGHT SWEEP ===== */}
         <motion.div
-          className="absolute bottom-0 left-1/2 -translate-x-1/2 w-2"
+          className="absolute inset-0"
           style={{
-            background: 'repeating-linear-gradient(to bottom, #FFC400 0px, #FFC400 40px, transparent 40px, transparent 80px)',
+            background: 'linear-gradient(110deg, transparent 40%, rgba(255,196,0,0.08) 50%, transparent 60%)',
           }}
-          initial={{ height: '0%', opacity: 0 }}
-          animate={{ 
-            height: ['0%', '30%', '50%', '0%'],
-            opacity: [0, 1, 0.8, 0],
+          animate={{
+            x: ['-100%', '100%'],
           }}
           transition={{
-            duration: 7,
-            times: [0, 0.4, 0.7, 1],
-            ease: "easeInOut",
+            duration: 2.5,
+            delay: 1,
+            repeat: Infinity,
+            ease: 'easeInOut',
           }}
         />
 
-        {/* Side road lines */}
+        {/* ===== LAYER 5: CORNER ACCENTS ===== */}
         <motion.div
-          className="absolute bottom-0 left-1/2 -translate-x-1/2 w-24 md:w-40"
-          style={{
-            borderLeft: '2px solid rgba(255,196,0,0.3)',
-            borderRight: '2px solid rgba(255,196,0,0.3)',
-          }}
-          initial={{ height: '0%', opacity: 0 }}
-          animate={{ 
-            height: ['0%', '35%', '55%', '0%'],
-            opacity: [0, 0.5, 0.3, 0],
-          }}
-          transition={{
-            duration: 7,
-            times: [0, 0.4, 0.7, 1],
-            ease: "easeInOut",
-          }}
+          className="absolute top-10 left-10 w-16 h-16"
+          style={{ borderTop: '1px solid rgba(255,196,0,0.4)', borderLeft: '1px solid rgba(255,196,0,0.4)' }}
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 2, duration: 1, ease: 'easeOut' }}
+        />
+        <motion.div
+          className="absolute top-10 right-10 w-16 h-16"
+          style={{ borderTop: '1px solid rgba(255,196,0,0.4)', borderRight: '1px solid rgba(255,196,0,0.4)' }}
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 2, duration: 1, ease: 'easeOut' }}
+        />
+        <motion.div
+          className="absolute bottom-10 left-10 w-16 h-16"
+          style={{ borderBottom: '1px solid rgba(255,196,0,0.4)', borderLeft: '1px solid rgba(255,196,0,0.4)' }}
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 2, duration: 1, ease: 'easeOut' }}
+        />
+        <motion.div
+          className="absolute bottom-10 right-10 w-16 h-16"
+          style={{ borderBottom: '1px solid rgba(255,196,0,0.4)', borderRight: '1px solid rgba(255,196,0,0.4)' }}
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 2, duration: 1, ease: 'easeOut' }}
         />
 
         {/* ===== CENTER CONTENT ===== */}
         <div className="relative h-full flex items-center justify-center">
           
-          {/* PHASE 0: Initial Black Screen */}
+          {/* PHASE 0: Pure Black */}
           {phase === 0 && (
             <motion.div
-              className="absolute inset-0 bg-chacha-black"
+              className="absolute inset-0 bg-black"
               initial={{ opacity: 1 }}
               animate={{ opacity: 0 }}
-              transition={{ duration: 0.5, delay: 0.5 }}
+              transition={{ duration: 1.5, delay: 0.5, ease: 'easeOut' }}
             />
           )}
 
-          {/* PHASE 0-1: Logo Explosion */}
+          {/* PHASE 0-1: Logo Emerges */}
           {(phase === 0 || phase === 1) && (
-            <motion.div className="text-center relative">
-              {/* Shockwave rings */}
-              {[...Array(3)].map((_, i) => (
-                <motion.div
-                  key={i}
-                  className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-chacha-yellow/50"
-                  initial={{ width: 100, height: 100, opacity: 1 }}
-                  animate={{ 
-                    width: 500 + i * 200,
-                    height: 500 + i * 200,
-                    opacity: 0,
-                  }}
-                  transition={{
-                    duration: 2,
-                    delay: 0.3 + i * 0.3,
-                    ease: "easeOut",
-                  }}
-                />
-              ))}
-
-              {/* Logo with dramatic entrance */}
+            <div className="text-center">
               <motion.div
-                className="relative w-48 h-48 md:w-64 md:h-64 mx-auto mb-8"
-                initial={{ scale: 0, rotate: -180, opacity: 0 }}
+                className="relative w-60 h-60 md:w-80 md:h-80 mx-auto mb-12"
+                initial={{ opacity: 0, scale: 0.2, filter: 'blur(30px)' }}
                 animate={{ 
-                  scale: 1,
-                  rotate: 0,
-                  opacity: 1,
+                  opacity: 1, 
+                  scale: 1, 
+                  filter: 'blur(0px)',
                 }}
-                transition={{
-                  type: "spring",
-                  stiffness: 200,
-                  damping: 20,
-                  delay: 0.2,
+                transition={{ 
+                  duration: 2.5, 
+                  ease: [0.16, 1, 0.3, 1],
                 }}
               >
                 <Image
                   src="/images/logo/vehiclechacha-logo.png"
-                  alt="VehicleChacha Logo"
+                  alt="VehicleChacha"
                   fill
                   className="object-contain"
+                  style={{
+                    filter: 'drop-shadow(0 0 50px rgba(255,196,0,0.6))',
+                  }}
                   priority
                 />
-                
-                {/* Rotating glow ring */}
+
+                {/* Pulsing Ring */}
                 <motion.div
-                  className="absolute -inset-6 border-2 border-chacha-yellow/40 rounded-full"
+                  className="absolute inset-0 rounded-full"
+                  style={{ border: '1px solid rgba(255,196,0,0.3)' }}
                   animate={{
-                    rotate: 360,
-                    scale: [1, 1.1, 1],
+                    scale: [1, 1.3, 1],
+                    opacity: [0.2, 0.8, 0.2],
                   }}
-                  transition={{
-                    rotate: { duration: 3, repeat: Infinity, ease: "linear" },
-                    scale: { duration: 1.5, repeat: Infinity, ease: "easeInOut" },
-                  }}
-                  style={{
-                    borderTopColor: '#FFC400',
-                    borderBottomColor: 'transparent',
-                    borderLeftColor: 'transparent',
-                    borderRightColor: 'transparent',
-                  }}
+                  transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
                 />
-                
-                {/* Counter-rotating ring */}
+
+                {/* Second Ring */}
                 <motion.div
-                  className="absolute -inset-10 border border-chacha-yellow/20 rounded-full"
-                  animate={{ rotate: -360 }}
-                  transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-                  style={{
-                    borderTopColor: 'transparent',
-                    borderBottomColor: '#FFC400',
-                    borderLeftColor: 'transparent',
-                    borderRightColor: 'transparent',
+                  className="absolute -inset-4 rounded-full"
+                  style={{ border: '1px solid rgba(255,196,0,0.15)' }}
+                  animate={{
+                    scale: [1.2, 1, 1.2],
+                    opacity: [0.1, 0.5, 0.1],
                   }}
+                  transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
                 />
               </motion.div>
 
-              {/* Brand name with letter animation */}
-              <motion.div
-                className="overflow-hidden"
+              {/* Subtle Text Below Logo */}
+              <motion.p
+                className="text-white/30 text-xs uppercase tracking-[0.5em]"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.6 }}
+                transition={{ delay: 1.8, duration: 1 }}
               >
-                <motion.h1
-                  className="text-5xl md:text-7xl font-bold text-white mb-4"
-                  initial={{ y: 100 }}
-                  animate={{ y: 0 }}
-                  transition={{ 
-                    delay: 0.6,
-                    type: "spring",
-                    stiffness: 100,
-                  }}
-                >
-                  {"Vehicle".split('').map((letter, i) => (
-                    <motion.span
-                      key={i}
-                      className="inline-block"
-                      initial={{ opacity: 0, y: 50 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.8 + i * 0.1 }}
-                    >
-                      {letter}
-                    </motion.span>
-                  ))}
-                  {"Chacha".split('').map((letter, i) => (
-                    <motion.span
-                      key={i}
-                      className="inline-block text-chacha-yellow"
-                      initial={{ opacity: 0, y: 50 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 1.4 + i * 0.1 }}
-                    >
-                      {letter}
-                    </motion.span>
-                  ))}
-                </motion.h1>
-              </motion.div>
-
-              {/* Tagline */}
-              <motion.p
-                className="text-lg md:text-2xl text-chacha-muted"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 2, duration: 0.5 }}
-              >
-                Budget Batao. Gaari Chacha Dhoondhega.
+                Est. 2026
               </motion.p>
+            </div>
+          )}
+
+          {/* PHASE 2: Brand Name */}
+          {phase === 2 && (
+            <motion.div className="text-center px-4">
+              <motion.h1
+                className="text-7xl md:text-9xl font-black text-white tracking-tighter"
+                initial={{ opacity: 0, y: 80, letterSpacing: '0.3em' }}
+                animate={{ opacity: 1, y: 0, letterSpacing: '0.02em' }}
+                transition={{ duration: 1.8, ease: [0.16, 1, 0.3, 1] }}
+              >
+                VEHICLE<span className="text-chacha-yellow">CHACHA</span>
+              </motion.h1>
+              
+              {/* Golden Divider */}
+              <motion.div
+                className="flex items-center justify-center gap-4 mt-8"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1 }}
+              >
+                <motion.div
+                  className="h-px bg-gradient-to-r from-transparent to-chacha-yellow/50"
+                  initial={{ width: 0 }}
+                  animate={{ width: 100 }}
+                  transition={{ delay: 1, duration: 0.8 }}
+                />
+                <motion.div
+                  className="w-2 h-2 bg-chacha-yellow rotate-45"
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 1.3, duration: 0.4 }}
+                />
+                <motion.div
+                  className="h-px bg-gradient-to-l from-transparent to-chacha-yellow/50"
+                  initial={{ width: 0 }}
+                  animate={{ width: 100 }}
+                  transition={{ delay: 1, duration: 0.8 }}
+                />
+              </motion.div>
             </motion.div>
           )}
 
-          {/* PHASE 2: Impact Statement */}
-          {phase === 2 && (
-            <motion.div
-              className="text-center px-4"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
+          {/* PHASE 3: Tagline */}
+          {phase === 3 && (
+            <motion.div className="text-center px-4">
               <motion.h2
-                className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-8"
-                initial={{ scale: 0.5, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{
-                  type: "spring",
-                  stiffness: 200,
-                  damping: 15,
-                }}
+                className="text-4xl md:text-6xl font-bold text-white"
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
               >
                 Find the Right Car for{' '}
-                <motion.span
-                  className="text-chacha-yellow inline-block"
-                  animate={{ 
-                    scale: [1, 1.2, 1],
-                    textShadow: [
-                      '0 0 20px rgba(255,196,0,0.5)',
-                      '0 0 40px rgba(255,196,0,0.8)',
-                      '0 0 20px rgba(255,196,0,0.5)',
-                    ],
-                  }}
-                  transition={{ 
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                >
-                  Your Budget
-                </motion.span>
+                <span className="text-chacha-yellow">Your Budget</span>
               </motion.h2>
-              
+
               <motion.div
-                className="flex flex-wrap gap-3 justify-center"
+                className="mt-6 text-chacha-muted text-lg md:text-xl uppercase tracking-widest"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
+                transition={{ delay: 0.6, duration: 0.8 }}
               >
-                {['Compare Cars', 'Check Prices', 'Get Recommendations'].map((text, index) => (
-                  <motion.span
-                    key={text}
-                    className="bg-chacha-yellow/10 border border-chacha-yellow/20 text-chacha-yellow px-6 py-3 rounded-full text-sm md:text-base font-medium"
-                    initial={{ opacity: 0, y: 30, scale: 0.5 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    transition={{ 
-                      delay: 0.5 + index * 0.3,
-                      type: "spring",
-                      stiffness: 200,
-                    }}
-                    whileHover={{ scale: 1.1 }}
-                  >
-                    {text}
-                  </motion.span>
-                ))}
+                Pakistan's Trusted Car Advisor
               </motion.div>
-            </motion.div>
-          )}
-
-          {/* PHASE 3: Final Impact */}
-          {phase === 3 && (
-            <motion.div
-              className="text-center"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-            >
-              <motion.div
-                className="text-7xl md:text-8xl mb-6"
-                initial={{ scale: 0, rotate: -30 }}
-                animate={{ scale: 1, rotate: 0 }}
-                transition={{
-                  type: "spring",
-                  stiffness: 200,
-                  damping: 10,
-                }}
-              >
-                🚗💨
-              </motion.div>
-              <motion.h2
-                className="text-4xl md:text-5xl font-bold text-chacha-yellow"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-              >
-                Let's Go!
-              </motion.h2>
             </motion.div>
           )}
         </div>
 
-        {/* ===== BOTTOM PROGRESS BAR ===== */}
+        {/* ===== BOTTOM PROGRESS ===== */}
         <motion.div
           className="absolute bottom-0 left-0 right-0"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
+          transition={{ delay: 1 }}
         >
           <motion.div
-            className="h-1.5 bg-gradient-to-r from-chacha-yellow via-yellow-400 to-chacha-yellow"
-            initial={{ width: '0%' }}
-            animate={{ width: '100%' }}
-            transition={{ duration: 7, ease: "easeInOut" }}
-            style={{
-              boxShadow: '0 0 20px rgba(255,196,0,0.5)',
-            }}
+            className="h-[2px] bg-gradient-to-r from-transparent via-chacha-yellow to-transparent"
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ duration: 8, ease: 'easeInOut' }}
+            style={{ boxShadow: '0 0 20px rgba(255,196,0,0.5)' }}
           />
         </motion.div>
 
-        {/* ===== SKIP BUTTON ===== */}
+        {/* Skip Button */}
         <motion.button
-          className="absolute top-6 right-6 text-chacha-muted hover:text-chacha-yellow transition-colors text-sm z-10"
+          className="absolute top-8 right-8 text-white/30 hover:text-white/70 transition-all text-xs uppercase tracking-[0.3em]"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
+          transition={{ delay: 2.5 }}
           onClick={() => {
             setShow(false);
             sessionStorage.setItem('hasSeenIntro', 'true');
             onComplete?.();
           }}
         >
-          Skip Intro →
+          Skip
         </motion.button>
       </motion.div>
     </AnimatePresence>

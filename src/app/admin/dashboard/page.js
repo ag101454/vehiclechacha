@@ -26,7 +26,8 @@ import {
   Clock,
   Eye,
   Award,
-  Flame
+  Flame,
+  MessageCircle 
 } from 'lucide-react';
 
 export default function AdminDashboard() {
@@ -102,6 +103,7 @@ export default function AdminDashboard() {
 
   const menuItems = [
     { label: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
+    { label: 'Mashwara', href: '/admin/dashboard/mashwara', icon: MessageCircle },
     { label: 'Vehicles', href: '/admin/dashboard/vehicles', icon: Car },
     { label: 'Add Vehicle', href: '/admin/dashboard/vehicles/new', icon: Plus },
     { label: 'Reviews', href: '/admin/dashboard/reviews', icon: Star },

@@ -40,10 +40,6 @@ export const metadata = {
   },
   alternates: {
     canonical: '/',
-    languages: {
-      'en-PK': '/',
-      'ur-PK': '/',
-    },
   },
   verification: {
     google: 'googleb56284ef43af8364',
@@ -82,27 +78,11 @@ export const metadata = {
       'max-video-preview': -1,
     },
   },
-  other: {
-    preconnect: ['https://fonts.googleapis.com', 'https://fonts.gstatic.com'],
-  },
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          rel="preload"
-          href="https://fonts.gstatic.com/s/inter/v13/UcC73FwrK3iLTeHuS_fvQtMwCp50KnMa1ZL7.woff2"
-          as="font"
-          type="font/woff2"
-          crossOrigin="anonymous"
-        />
-        <meta name="theme-color" content="#0A0A0A" />
-        <meta name="color-scheme" content="dark" />
-      </head>
       <body className="bg-chacha-black text-white min-h-screen">
         <OrganizationSchema />
         <WelcomeWrapper />
