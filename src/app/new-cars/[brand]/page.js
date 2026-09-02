@@ -10,18 +10,33 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export async function generateMetadata({ params }) {
-  try {
-    const brand = await prisma.brand.findUnique({
-      where: { slug: params.brand },
-    });
-    return {
-      title: brand ? `${brand.name} Cars in Pakistan - All Models & Prices | VehicleChacha` : 'Brand Not Found',
-      description: brand ? `Browse all ${brand.name} cars in Pakistan. Compare prices, specifications, features, and reviews.` : '',
-    };
-  } catch {
-    return { title: 'Brand | VehicleChacha' };
+    try {
+      const brand = await prisma.brand.findUnique({
+        where: { slug: params.brand },
+      });
+      
+      if (!brand) {
+        return { title: 'Brand Not Found | VehicleChacha' };
+      }
+  
+      const brandDescriptions = {
+        'toyota': 'Reliable and high resale value cars',
+        'honda': 'Performance and comfort focused cars',
+        'suzuki': 'Affordable and fuel-efficient cars',
+        'kia': 'Modern and feature-packed cars',
+        'hyundai': 'Innovative and stylish cars',
+        'mg': 'British heritage modern cars',
+        'changan': 'Value-packed Chinese cars',
+      };
+  
+      return {
+        title: `${brand.name} Cars in Pakistan - Prices & Specs | VehicleChacha`,
+        description: `Browse all ${brand.name} cars in Pakistan. ${brandDescriptions[brand.slug] || 'Compare prices, specifications, features, and reviews.'}`,
+      };
+    } catch {
+      return { title: 'Brand | VehicleChacha' };
+    }
   }
-}
 
 async function getBrandWithAllVehicles(slug) {
   try {
@@ -178,6 +193,16 @@ export default async function BrandPage({ params }) {
               </div>
             </>
           )}
+
+            <div className="card-dark p-6 mt-10">
+            <h2 className="text-white font-bold text-xl mb-3">About {brand.name} Cars</h2>
+            <p className="text-chacha-muted text-sm leading-relaxed">
+                {brand.name} is one of Pakistan's most popular car brands. 
+                {brand.vehicles.length} {brand.name} {brand.vehicles.length === 1 ? 'car is' : 'cars are'} currently available 
+                on VehicleChacha. Browse through {brand.name} cars, compare prices, 
+                read user reviews, and find the perfect {brand.name} for your budget.
+            </p>
+            </div>
         </div>
       </main>
       <Footer />
