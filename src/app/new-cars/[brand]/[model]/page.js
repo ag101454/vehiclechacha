@@ -4,11 +4,13 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { 
   Fuel, Users, Settings, CheckCircle, XCircle,
-  ArrowRight, Car as CarIcon, ThumbsUp, ThumbsDown, Star
+  ArrowRight, Car as CarIcon, ThumbsUp, ThumbsDown, Star,
+  Shield, Sparkles
 } from 'lucide-react';
 import { prisma } from '@/lib/db';
 import CarGallery from '@/components/cars/CarGallery';
 import ReviewSection from '@/components/reviews/ReviewSection';
+import FeatureDisplay from '@/components/cars/FeatureDisplay';
 import VehicleSchema from '@/components/seo/VehicleSchema';
 import BreadcrumbSchema from '@/components/seo/BreadcrumbSchema';
 
@@ -17,7 +19,7 @@ export const dynamic = 'force-dynamic';
 export async function generateMetadata({ params }) {
   return {
     title: `${params.model} Price in Pakistan | Specs & Features | VehicleChacha`,
-    description: `Check ${params.model} price, specifications, reviews, and ratings.`,
+    description: `Check ${params.model} price, specifications, features, reviews, and ratings.`,
   };
 }
 
@@ -43,12 +45,21 @@ async function getVehicle(brandSlug, modelSlug) {
     try { imagesArray = JSON.parse(vehicle.images || '[]'); } catch { imagesArray = vehicle.image ? [vehicle.image] : []; }
     if (imagesArray.length === 0 && vehicle.image) imagesArray = [vehicle.image];
 
+    let featuresArray = [];
+    try { featuresArray = JSON.parse(vehicle.features || '[]'); } catch { featuresArray = []; }
+
+    let prosArray = [];
+    try { prosArray = JSON.parse(vehicle.pros || '[]'); } catch { prosArray = []; }
+
+    let consArray = [];
+    try { consArray = JSON.parse(vehicle.cons || '[]'); } catch { consArray = []; }
+
     return {
       ...vehicle,
       images: imagesArray,
-      features: JSON.parse(vehicle.features || '[]'),
-      pros: JSON.parse(vehicle.pros || '[]'),
-      cons: JSON.parse(vehicle.cons || '[]'),
+      features: featuresArray,
+      pros: prosArray,
+      cons: consArray,
       averageRating: vehicle.averageRating || 0,
       totalReviews: vehicle.totalReviews || 0,
     };
@@ -84,14 +95,13 @@ export default async function CarDetailPage({ params }) {
 
   return (
     <>
-    
-        <VehicleSchema vehicle={vehicle} />
-        <BreadcrumbSchema items={[
+      <VehicleSchema vehicle={vehicle} />
+      <BreadcrumbSchema items={[
         { name: 'Home', url: '/' },
         { name: 'New Cars', url: '/new-cars' },
         { name: vehicle.brand.name, url: `/new-cars/${vehicle.brand.slug}` },
         { name: vehicle.name, url: `/new-cars/${vehicle.brand.slug}/${vehicle.slug}` },
-        ]} />
+      ]} />
 
       <Navbar />
       <main className="min-h-screen pt-20 md:pt-24 pb-12">
@@ -138,6 +148,9 @@ export default async function CarDetailPage({ params }) {
               <div className="card-dark p-6">
                 <div className="text-chacha-muted text-sm mb-1">Starting Price</div>
                 <div className="text-3xl font-bold text-chacha-yellow">{formatPrice(vehicle.price)}</div>
+                {vehicle.oldPrice && vehicle.oldPrice !== vehicle.price && (
+                  <div className="text-chacha-muted text-sm line-through mt-1">{formatPrice(vehicle.oldPrice)}</div>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -154,6 +167,20 @@ export default async function CarDetailPage({ params }) {
             <div className="card-dark p-6 mb-8">
               <h2 className="text-2xl font-bold text-white mb-4">Overview</h2>
               <p className="text-chacha-muted leading-relaxed">{vehicle.description}</p>
+            </div>
+          )}
+
+          {/* Features Section */}
+          {vehicle.features.length > 0 && (
+            <div className="card-dark p-6 mb-8">
+              <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+                <Sparkles className="text-chacha-yellow" size={24} />
+                Key Features
+                <span className="text-chacha-yellow text-sm font-normal">
+                  ({vehicle.features.length})
+                </span>
+              </h2>
+              <FeatureDisplay features={vehicle.features} />
             </div>
           )}
 
@@ -180,6 +207,27 @@ export default async function CarDetailPage({ params }) {
                   </ul>
                 </div>
               )}
+            </div>
+          )}
+
+          {/* Specifications */}
+          {(vehicle.length || vehicle.width || vehicle.height || vehicle.groundClearance || 
+            vehicle.bootSpace || vehicle.fuelTankCapacity || vehicle.kerbWeight || vehicle.wheelbase) && (
+            <div className="card-dark p-6 mb-8">
+              <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+                <Settings className="text-chacha-yellow" size={24} />
+                Specifications
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {vehicle.length && <div className="bg-chacha-black rounded-lg p-3"><div className="text-chacha-muted text-xs">Length</div><div className="text-white font-semibold text-sm">{vehicle.length}</div></div>}
+                {vehicle.width && <div className="bg-chacha-black rounded-lg p-3"><div className="text-chacha-muted text-xs">Width</div><div className="text-white font-semibold text-sm">{vehicle.width}</div></div>}
+                {vehicle.height && <div className="bg-chacha-black rounded-lg p-3"><div className="text-chacha-muted text-xs">Height</div><div className="text-white font-semibold text-sm">{vehicle.height}</div></div>}
+                {vehicle.wheelbase && <div className="bg-chacha-black rounded-lg p-3"><div className="text-chacha-muted text-xs">Wheelbase</div><div className="text-white font-semibold text-sm">{vehicle.wheelbase}</div></div>}
+                {vehicle.groundClearance && <div className="bg-chacha-black rounded-lg p-3"><div className="text-chacha-muted text-xs">Ground Clearance</div><div className="text-white font-semibold text-sm">{vehicle.groundClearance}</div></div>}
+                {vehicle.bootSpace && <div className="bg-chacha-black rounded-lg p-3"><div className="text-chacha-muted text-xs">Boot Space</div><div className="text-white font-semibold text-sm">{vehicle.bootSpace}</div></div>}
+                {vehicle.fuelTankCapacity && <div className="bg-chacha-black rounded-lg p-3"><div className="text-chacha-muted text-xs">Fuel Tank</div><div className="text-white font-semibold text-sm">{vehicle.fuelTankCapacity}</div></div>}
+                {vehicle.kerbWeight && <div className="bg-chacha-black rounded-lg p-3"><div className="text-chacha-muted text-xs">Kerb Weight</div><div className="text-white font-semibold text-sm">{vehicle.kerbWeight}</div></div>}
+              </div>
             </div>
           )}
 
