@@ -20,43 +20,44 @@ model Brand {
 }
 
 model Vehicle {
-  id           String   @id @default(cuid())
-  brandId      String
-  brand        Brand    @relation(fields: [brandId], references: [id])
-  name         String
-  slug         String
-  bodyType     String
-  price        Float
-  oldPrice     Float?
-  engine       String?
-  transmission String?
-  fuelType     String?
-  fuelEconomy  String?
-  seats        Int?
-  description  String?
-  image        String?
-  images       String   @default("[]")
-  isPopular    Boolean  @default(false)
-  isAvailable  Boolean  @default(true)
-  launchYear   Int?
-  horsepower   Int?
-  torque       String?
-  groundClearance String?
-  bootSpace    String?
-  length       String?
-  width        String?
-  height       String?
-  wheelbase    String?
+  id               String     @id @default(cuid())
+  brandId          String
+  brand            Brand      @relation(fields: [brandId], references: [id])
+  name             String
+  slug             String
+  bodyType         String
+  price            Float
+  oldPrice         Float?
+  engine           String?
+  transmission     String?
+  fuelType         String?
+  fuelEconomy      String?
+  seats            Int?
+  description      String?
+  image            String?
+  images           String     @default("[]")
+  isPopular        Boolean    @default(false)
+  isAvailable      Boolean    @default(true)
+  launchYear       Int?
+  horsepower       Int?
+  torque           String?
+  groundClearance  String?
+  bootSpace        String?
+  length           String?
+  width            String?
+  height           String?
+  wheelbase        String?
   fuelTankCapacity String?
-  kerbWeight   String?
-  features     String   @default("[]")
-  pros         String   @default("[]")
-  cons         String   @default("[]")
-  reviews      Review[]
-  averageRating Float   @default(0)
-  totalReviews  Int     @default(0)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  kerbWeight       String?
+  features         String     @default("[]")
+  pros             String     @default("[]")
+  cons             String     @default("[]")
+  reviews          Review[]
+  groupChat        GroupChat?
+  averageRating    Float      @default(0)
+  totalReviews     Int        @default(0)
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
 
   @@unique([brandId, name])
   @@index([bodyType])
@@ -65,20 +66,20 @@ model Vehicle {
 }
 
 model Review {
-  id        String   @id @default(cuid())
-  vehicleId String
-  vehicle   Vehicle  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
-  userName  String
-  email     String
-  rating    Int
-  title     String?
-  review    String
-  pros      String?
-  cons      String?
-  isVerified Boolean @default(false)
-  isApproved Boolean @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(cuid())
+  vehicleId  String
+  vehicle    Vehicle  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  userName   String
+  email      String
+  rating     Int
+  title      String?
+  review     String
+  pros       String?
+  cons       String?
+  isVerified Boolean  @default(false)
+  isApproved Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   @@unique([vehicleId, email])
   @@index([vehicleId])
@@ -98,19 +99,51 @@ model Guide {
 }
 
 model MashwaraRequest {
-  id          String   @id @default(cuid())
-  name        String
-  phone       String
-  email       String?
-  budgetMin   Float?
-  budgetMax   Float?
-  bodyType    String?
-  familySize  String?
-  message     String?
-  paymentStatus String @default("pending") // pending, paid, verified, rejected
+  id            String   @id @default(cuid())
+  name          String
+  phone         String
+  email         String?
+  budgetMin     Float?
+  budgetMax     Float?
+  bodyType      String?
+  familySize    String?
+  message       String?
+  paymentStatus String   @default("pending") // pending, paid, verified, rejected
   transactionId String?
-  screenshot   String?  // NEW: Payment screenshot
-  adminNote    String?  // NEW: Admin notes
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  screenshot    String? // NEW: Payment screenshot
+  adminNote     String? // NEW: Admin notes
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model GroupChat {
+  id           String            @id @default(cuid())
+  vehicleId    String            @unique
+  vehicle      Vehicle           @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  messages     ChatMessage[]
+  participants ChatParticipant[]
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+}
+
+model ChatMessage {
+  id        String    @id @default(cuid())
+  chatId    String
+  chat      GroupChat @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  userName  String
+  userEmail String?
+  message   String
+  image     String?
+  isPinned  Boolean   @default(false)
+  isAdmin   Boolean   @default(false)
+  createdAt DateTime  @default(now())
+}
+
+model ChatParticipant {
+  id        String    @id @default(cuid())
+  chatId    String
+  chat      GroupChat @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  userName  String
+  userEmail String?
+  joinedAt  DateTime  @default(now())
 }

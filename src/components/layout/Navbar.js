@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Search, ChevronDown, Compass, Zap } from 'lucide-react';
+import { Menu, X, Search, ChevronDown, Compass, Zap, MessageCircle } from 'lucide-react';
 import { useRouter, usePathname } from 'next/navigation';
 
 export default function Navbar() {
@@ -262,11 +262,19 @@ export default function Navbar() {
 
             {/* CTA - Gradient Button */}
             <Link
-              href="/find-my-car"
-              className="hidden md:inline-flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-full bg-gradient-to-r from-chacha-yellow to-yellow-400 text-chacha-black hover:shadow-lg hover:shadow-chacha-yellow/30 hover:scale-105 transition-all duration-300"
-            >
-              <Zap size={15} className="fill-chacha-black" />
-              Find My Car
+                href="/group-chat"
+                className="hidden md:inline-flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-full bg-gradient-to-r from-green-500 to-green-400 text-white hover:shadow-lg hover:shadow-green-500/30 hover:scale-105 transition-all duration-300"
+                >
+                <MessageCircle size={15} />
+                Group Chat
+            </Link>
+
+            <Link
+                href="/find-my-car"
+                className="hidden md:inline-flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-full bg-gradient-to-r from-chacha-yellow to-yellow-400 text-chacha-black hover:shadow-lg hover:shadow-chacha-yellow/30 hover:scale-105 transition-all duration-300"
+                >
+                <Zap size={15} className="fill-chacha-black" />
+                Find My Car
             </Link>
 
             {/* Mobile Menu */}
@@ -310,6 +318,14 @@ export default function Navbar() {
                 <Zap size={16} />
                 Find My Car
               </Link>
+
+              <Link
+                href="/group-chat"
+                className="hidden md:inline-flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-full bg-gradient-to-r from-green-500 to-green-400 text-white hover:shadow-lg hover:shadow-green-500/30 hover:scale-105 transition-all duration-300"
+                >
+                <MessageCircle size={15} />
+                Group Chat
+            </Link>
             </div>
           </motion.div>
         )}

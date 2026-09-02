@@ -1,0 +1,20 @@
+import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/db';
+
+export async function PUT(request, { params }) {
+  try {
+    const data = await request.json();
+    const { messageId, isPinned } = data;
+
+    const message = await prisma.chatMessage.update({
+      where: { id: messageId },
+      data: { isPinned },
+    });
+
+    return NextResponse.json({ success: true, message });
+
+  } catch (error) {
+    console.error('Error:', error);
+    return NextResponse.json({ message: error.message }, { status: 500 });
+  }
+}

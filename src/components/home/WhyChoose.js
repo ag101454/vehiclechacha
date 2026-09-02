@@ -96,26 +96,6 @@ export default function WhyChoose() {
             </div>
           ))}
         </div>
-
-        {/* CTA Banner */}
-        <div className="mt-12 card-dark p-8 text-center relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-chacha-yellow/10 via-transparent to-chacha-yellow/10" />
-          <div className="relative z-10">
-            <h3 className="text-2xl font-bold text-white mb-2">
-              Ready to Find Your Perfect Car?
-            </h3>
-            <p className="text-chacha-muted mb-6">
-              Let Chacha guide you to the right choice
-            </p>
-            <Link
-              href="/find-my-car"
-              className="btn-primary inline-flex items-center gap-2 px-8 py-3 text-lg"
-            >
-              Start Find My Car
-              <ArrowRight size={20} />
-            </Link>
-          </div>
-        </div>
       </div>
     </section>
   );

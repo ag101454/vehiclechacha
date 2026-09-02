@@ -3,6 +3,7 @@ import WelcomeWrapper from '@/components/intro/WelcomeWrapper';
 import ChatbotWidget from '@/components/chat/ChatbotWidget';
 import OrganizationSchema from '@/components/seo/OrganizationSchema';
 
+
 export const metadata = {
   metadataBase: new URL('https://vehiclechacha.vercel.app'),
   title: {
