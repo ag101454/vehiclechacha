@@ -11,6 +11,8 @@ import {
 export default function CarGroupChatPage() {
   const params = useParams();
   const [messages, setMessages] = useState([]);
+  const [pinnedMessages, setPinnedMessages] = useState([]);
+  const [regularMessages, setRegularMessages] = useState([]);
   const [participants, setParticipants] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [userName, setUserName] = useState('');
@@ -41,14 +43,14 @@ export default function CarGroupChatPage() {
     fetchCarInfo();
   }, []);
 
-  // Poll for new messages - NO AUTO-SCROLL during polling
+  // Poll for new messages
   useEffect(() => {
     if (!showJoinForm) {
-      fetchMessages(false); // Initial load - scroll once
+      fetchMessages(false);
       fetchParticipants();
       
       const interval = setInterval(() => {
-        fetchMessages(true); // Polling - NEVER scroll
+        fetchMessages(true);
         fetchParticipants();
       }, 5000);
       
@@ -89,21 +91,28 @@ export default function CarGroupChatPage() {
       });
       const data = await response.json();
       if (response.ok) {
-        const newMessages = data.messages || [];
-        setMessages(newMessages);
+        const allMessages = data.messages || [];
         
-        // ONLY scroll on initial load (first time entering chat)
+        // Separate pinned and regular messages
+        const pinned = allMessages.filter(m => m.isPinned);
+        const regular = allMessages.filter(m => !m.isPinned);
+        
+        setPinnedMessages(pinned);
+        setRegularMessages(regular);
+        setMessages(allMessages);
+        
+        // ONLY scroll on initial load
         if (!isPolling && !hasInitialLoaded.current) {
           setTimeout(() => scrollToBottom(false), 300);
           hasInitialLoaded.current = true;
         }
         
-        // Show scroll button if new messages arrive while user is reading
-        if (isPolling && newMessages.length > lastMessageCount.current && !isNearBottom()) {
+        // Show scroll button if new messages arrive
+        if (isPolling && allMessages.length > lastMessageCount.current && !isNearBottom()) {
           setShowScrollButton(true);
         }
         
-        lastMessageCount.current = newMessages.length;
+        lastMessageCount.current = allMessages.length;
       }
     } catch (error) {
       console.error('Error:', error);
@@ -137,7 +146,7 @@ export default function CarGroupChatPage() {
       
       localStorage.setItem('vehiclechacha_user', JSON.stringify({ userName, userEmail }));
       setShowJoinForm(false);
-      hasInitialLoaded.current = false; // Reset for initial scroll after join
+      hasInitialLoaded.current = false;
       fetchMessages(false);
       fetchParticipants();
     } catch (error) {
@@ -165,7 +174,6 @@ export default function CarGroupChatPage() {
       if (response.ok) {
         setNewMessage('');
         await fetchMessages(false);
-        // Scroll to bottom after user sends message
         setTimeout(() => scrollToBottom(true), 200);
       }
     } catch (error) {
@@ -272,55 +280,85 @@ export default function CarGroupChatPage() {
         <div 
           ref={messagesContainerRef}
           onScroll={handleScroll}
-          className="flex-1 overflow-y-auto p-4 space-y-3 bg-chacha-black relative"
+          className="flex-1 overflow-y-auto bg-chacha-black relative"
           style={{ maxHeight: 'calc(100vh - 180px)' }}
         >
-          {messages.length === 0 ? (
-            <div className="text-center py-12">
-              <MessageCircle size={48} className="text-chacha-muted mx-auto mb-3" />
-              <p className="text-chacha-muted">No messages yet. Start the conversation!</p>
-            </div>
-          ) : (
-            messages.map((msg) => (
-              <div key={msg.id} className={`flex ${msg.userName === userName || msg.isAdmin ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[75%] ${msg.userName === userName || msg.isAdmin ? 'order-1' : ''}`}>
-                  {msg.isPinned && (
-                    <div className="flex items-center gap-1 text-chacha-yellow text-xs mb-1">
-                      <Pin size={12} /> Pinned by Admin
+          {/* ===== PINNED MESSAGES SECTION (WhatsApp Style) ===== */}
+          {pinnedMessages.length > 0 && (
+            <div className="bg-chacha-yellow/5 border-b border-chacha-yellow/20 sticky top-0 z-10 backdrop-blur">
+              {/* Pinned Header */}
+              <div className="flex items-center gap-2 px-4 py-2 text-chacha-yellow">
+                <Pin size={14} />
+                <span className="text-xs font-bold uppercase tracking-wide">Pinned Messages</span>
+                <span className="text-chacha-muted text-xs">({pinnedMessages.length})</span>
+              </div>
+              
+              {/* Pinned Messages */}
+              <div className="px-4 pb-3 space-y-2">
+                {pinnedMessages.map((msg) => (
+                  <div key={msg.id} className="bg-chacha-card border border-chacha-yellow/30 rounded-xl p-3">
+                    <div className="flex items-start gap-2">
+                      <Pin size={14} className="text-chacha-yellow shrink-0 mt-1" />
+                      <div className="flex-1">
+                        <div className="text-xs font-bold text-chacha-yellow mb-1">
+                          {msg.isAdmin ? '👨🏽 Chacha (Admin)' : msg.userName}
+                        </div>
+                        <p className="text-white text-sm">{msg.message}</p>
+                        <div className="text-chacha-muted text-[10px] mt-1">
+                          {new Date(msg.createdAt).toLocaleTimeString('en-PK', { hour: '2-digit', minute: '2-digit' })}
+                        </div>
+                      </div>
                     </div>
-                  )}
-                  <div className={`px-4 py-2 rounded-2xl text-sm ${
-                    msg.isAdmin
-                      ? 'bg-chacha-yellow text-chacha-black rounded-br-none'
-                      : msg.userName === userName
-                      ? 'bg-green-500 text-white rounded-br-none'
-                      : 'bg-chacha-card text-white rounded-bl-none'
-                  }`}>
-                    {msg.userName !== userName && !msg.isAdmin && (
-                      <div className="text-green-500 text-xs font-bold mb-1">{msg.userName}</div>
-                    )}
-                    {msg.isAdmin && (
-                      <div className="text-chacha-black/70 text-xs font-bold mb-1">👨🏽 Chacha (Admin)</div>
-                    )}
-                    {msg.message}
                   </div>
-                  <div className="text-chacha-muted text-[10px] mt-1 flex items-center gap-1">
-                    <Clock size={10} />
-                    {new Date(msg.createdAt).toLocaleTimeString('en-PK', { hour: '2-digit', minute: '2-digit' })}
-                    {(msg.userName === userName || msg.isAdmin) && <CheckCircle size={10} className="text-green-500" />}
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Regular Messages */}
+          <div className="p-4 space-y-3">
+            {regularMessages.length === 0 && pinnedMessages.length === 0 ? (
+              <div className="text-center py-12">
+                <MessageCircle size={48} className="text-chacha-muted mx-auto mb-3" />
+                <p className="text-chacha-muted">No messages yet. Start the conversation!</p>
+              </div>
+            ) : (
+              regularMessages.map((msg) => (
+                <div key={msg.id} className={`flex ${msg.userName === userName || msg.isAdmin ? 'justify-end' : 'justify-start'}`}>
+                  <div className={`max-w-[75%] ${msg.userName === userName || msg.isAdmin ? 'order-1' : ''}`}>
+                    <div className={`px-4 py-2 rounded-2xl text-sm ${
+                      msg.isAdmin
+                        ? 'bg-chacha-yellow text-chacha-black rounded-br-none'
+                        : msg.userName === userName
+                        ? 'bg-green-500 text-white rounded-br-none'
+                        : 'bg-chacha-card text-white rounded-bl-none'
+                    }`}>
+                      {msg.userName !== userName && !msg.isAdmin && (
+                        <div className="text-green-500 text-xs font-bold mb-1">{msg.userName}</div>
+                      )}
+                      {msg.isAdmin && (
+                        <div className="text-chacha-black/70 text-xs font-bold mb-1">👨🏽 Chacha (Admin)</div>
+                      )}
+                      {msg.message}
+                    </div>
+                    <div className="text-chacha-muted text-[10px] mt-1 flex items-center gap-1">
+                      <Clock size={10} />
+                      {new Date(msg.createdAt).toLocaleTimeString('en-PK', { hour: '2-digit', minute: '2-digit' })}
+                      {(msg.userName === userName || msg.isAdmin) && <CheckCircle size={10} className="text-green-500" />}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))
-          )}
-          <div ref={messagesEndRef} />
+              ))
+            )}
+            <div ref={messagesEndRef} />
+          </div>
         </div>
 
         {/* Scroll to bottom button */}
         {showScrollButton && (
           <button
             onClick={handleScrollToBottom}
-            className="fixed bottom-24 left-1/2 -translate-x-1/2 bg-green-500 text-white rounded-full px-4 py-2 shadow-lg hover:bg-green-600 transition-colors z-10 flex items-center gap-1 text-sm font-medium"
+            className="fixed bottom-24 left-1/2 -translate-x-1/2 bg-green-500 text-white rounded-full px-4 py-2 shadow-lg hover:bg-green-600 transition-colors z-20 flex items-center gap-1 text-sm font-medium"
           >
             <ArrowDown size={16} />
             New Messages
