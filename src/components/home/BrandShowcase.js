@@ -90,6 +90,30 @@ const brands = [
     bgGradient: 'from-cyan-500/20 to-cyan-500/5',
     borderHover: 'hover:border-cyan-500/50',
   },
+  {
+    name: 'Deepal',
+    slug: 'deepal',
+    logo: '/images/brands/deepal.png',
+    fallback: 'DP',
+    color: '#00B4D8',
+    description: 'Electric & Future Ready',
+    carsCount: 'Coming Soon',
+    rating: 'New Entry',
+    bgGradient: 'from-cyan-500/20 to-cyan-500/5',
+    borderHover: 'hover:border-cyan-500/50',
+  },
+  {
+    name: 'Jaecoo',
+    slug: 'jaecoo',
+    logo: '/images/brands/jaecoo.png',
+    fallback: 'JC',
+    color: '#8B0000',
+    description: 'Luxury Chinese SUV',
+    carsCount: 'Coming Soon',
+    rating: 'New Entry',
+    bgGradient: 'from-red-900/20 to-red-900/5',
+    borderHover: 'hover:border-red-900/50',
+  },
 ];
 
 export default function BrandShowcase() {

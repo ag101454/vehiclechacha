@@ -16,10 +16,10 @@ export function calculateChachaMatch(vehicle, userPreferences) {
     scores.safety = calculateSafety(vehicle.features, userPreferences.priorities);
     
     // 5. Maintenance (10%)
-    scores.maintenance = calculateMaintenance(vehicle.brand.name, userPreferences.priorities);
+    scores.maintenance = calculateMaintenance(vehicle.brand?.name || vehicle.brandName, userPreferences.priorities);
     
     // 6. Resale (10%)
-    scores.resale = calculateResale(vehicle.brand.name);
+    scores.resale = calculateResale(vehicle.brand?.name || vehicle.brandName);
     
     // 7. Features (5%)
     scores.features = calculateFeatures(vehicle.features);
@@ -78,7 +78,7 @@ export function calculateChachaMatch(vehicle, userPreferences) {
     if (price > max) {
       const difference = price - max;
       const percentage = (difference / max) * 100;
-      return Math.max(30, 100 - percentage * 2);
+      return Math.max(20, 100 - percentage * 2);
     }
     
     return 50;
@@ -105,7 +105,7 @@ export function calculateChachaMatch(vehicle, userPreferences) {
     else score = 45;
     
     if (priorities && priorities.includes('fuel-economy')) {
-      score += 5;
+      score += 10;
     }
     
     return Math.min(100, score);
@@ -117,18 +117,26 @@ export function calculateChachaMatch(vehicle, userPreferences) {
     const seats = vehicle.seats || 5;
     
     switch (familySize) {
-      case '1-2': return 90;
-      case '3-4': return seats >= 4 ? 85 : 60;
-      case '5-plus': return seats >= 5 ? 90 : seats >= 4 ? 70 : 40;
-      case 'large': return seats >= 7 ? 95 : seats >= 5 ? 75 : 50;
-      default: return 70;
+      case '1-2':
+        return 90;
+      case '3-4':
+        return seats >= 4 ? 85 : 60;
+      case '5-plus':
+        return seats >= 5 ? 90 : seats >= 4 ? 70 : 40;
+      case 'large':
+        return seats >= 7 ? 95 : seats >= 5 ? 75 : 50;
+      default:
+        return 70;
     }
   }
   
   function calculateSafety(features, priorities) {
-    if (!features || features.length === 0) return 60;
+    if (!features || features.length === 0) return 50;
     
-    const safetyFeatures = ['airbag', 'abs', 'ebd', 'parking', 'camera', 'traction', 'stability', 'hill', 'immobilizer'];
+    const safetyFeatures = [
+      'airbag', 'abs', 'ebd', 'parking', 'camera', 'traction', 
+      'stability', 'hill', 'immobilizer', 'brake assist', 'blind spot'
+    ];
     
     const featuresLower = features.map(f => String(f).toLowerCase());
     const safetyCount = safetyFeatures.filter(sf => 
@@ -138,7 +146,7 @@ export function calculateChachaMatch(vehicle, userPreferences) {
     let score = 50 + (safetyCount / safetyFeatures.length) * 50;
     
     if (priorities && priorities.includes('safety')) {
-      score += 5;
+      score += 10;
     }
     
     return Math.min(100, Math.round(score));
@@ -151,12 +159,16 @@ export function calculateChachaMatch(vehicle, userPreferences) {
       'Suzuki': 92,
       'Kia': 78,
       'Hyundai': 80,
+      'MG': 70,
+      'Changan': 72,
+      'Deepal': 65,
+      'Jaecoo': 68,
     };
     
     let score = maintenanceScores[brandName] || 70;
     
     if (priorities && priorities.includes('maintenance')) {
-      score += 5;
+      score += 10;
     }
     
     return Math.min(100, score);
@@ -169,26 +181,34 @@ export function calculateChachaMatch(vehicle, userPreferences) {
       'Suzuki': 85,
       'Kia': 75,
       'Hyundai': 72,
+      'MG': 60,
+      'Changan': 58,
+      'Deepal': 50,
+      'Jaecoo': 52,
     };
     
     return resaleScores[brandName] || 60;
   }
   
   function calculateFeatures(features) {
-    if (!features || features.length === 0) return 50;
+    if (!features || features.length === 0) return 40;
     
-    const premiumFeatures = ['sunroof', 'leather', 'navigation', 'bluetooth', 'usb', 'climate', 'cruise', 'push', 'keyless', 'android', 'apple', 'carplay'];
+    const premiumFeatures = [
+      'sunroof', 'leather', 'navigation', 'bluetooth', 'usb', 
+      'climate', 'cruise', 'push start', 'keyless', 'android auto', 
+      'apple carplay', 'wireless charger', '360 camera'
+    ];
     
     const featuresLower = features.map(f => String(f).toLowerCase());
     const premiumCount = premiumFeatures.filter(pf => 
       featuresLower.some(f => f.includes(pf))
     ).length;
     
-    return Math.min(100, 50 + (premiumCount / premiumFeatures.length) * 50);
+    return Math.min(100, 40 + (premiumCount / premiumFeatures.length) * 60);
   }
   
   function calculatePerformance(horsepower) {
-    if (!horsepower) return 60;
+    if (!horsepower) return 50;
     
     if (horsepower >= 200) return 90;
     if (horsepower >= 150) return 80;
@@ -210,7 +230,7 @@ export function calculateChachaMatch(vehicle, userPreferences) {
       };
     });
     
-    // Sort by Chacha Match score
+    // Sort by Chacha Match score (highest first)
     scoredVehicles.sort((a, b) => b.chachaMatch - a.chachaMatch);
     
     const bestOverall = scoredVehicles[0] || null;
@@ -272,7 +292,7 @@ export function calculateChachaMatch(vehicle, userPreferences) {
   
   function findBestValue(scoredVehicles) {
     return scoredVehicles
-      .filter(v => v.chachaMatch >= 70)
+      .filter(v => v.chachaMatch >= 65)
       .sort((a, b) => (a.price / a.chachaMatch) - (b.price / b.chachaMatch))[0];
   }
   

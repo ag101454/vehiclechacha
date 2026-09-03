@@ -5,28 +5,16 @@ import { getRecommendations } from '@/lib/recommendation/engine';
 export async function POST(request) {
   try {
     const userPreferences = await request.json();
-    console.log('User preferences received:', userPreferences);
+    console.log('User preferences:', JSON.stringify(userPreferences, null, 2));
 
-    // Fetch ALL available vehicles from database
+    // Fetch ALL vehicles
     const vehicles = await prisma.vehicle.findMany({
-      where: { 
-        isAvailable: true 
-      },
-      include: { 
-        brand: true 
-      },
+      where: { isAvailable: true },
+      include: { brand: true },
     });
 
-    console.log(`Found ${vehicles.length} vehicles in database`);
-
     if (vehicles.length === 0) {
-      return NextResponse.json(
-        { 
-          success: false, 
-          message: 'No cars available in database yet' 
-        },
-        { status: 200 }
-      );
+      return NextResponse.json({ success: false, message: 'No cars available' });
     }
 
     // Parse features for each vehicle
@@ -38,42 +26,45 @@ export async function POST(request) {
       images: JSON.parse(v.images || '[]'),
     }));
 
-    // Filter by body type
+    console.log('Total vehicles before filter:', filteredVehicles.length);
+
+    // Apply filters based on user preferences
     if (userPreferences.bodyType && userPreferences.bodyType !== 'no-preference') {
+      const before = filteredVehicles.length;
       filteredVehicles = filteredVehicles.filter(v => 
         v.bodyType?.toLowerCase() === userPreferences.bodyType.toLowerCase()
       );
-      console.log(`After body type filter: ${filteredVehicles.length} vehicles`);
+      console.log(`Body type filter (${userPreferences.bodyType}): ${before} → ${filteredVehicles.length}`);
     }
 
-    // Filter by fuel type
     if (userPreferences.fuel && userPreferences.fuel !== 'no-preference') {
+      const before = filteredVehicles.length;
       filteredVehicles = filteredVehicles.filter(v => 
         v.fuelType?.toLowerCase() === userPreferences.fuel.toLowerCase()
       );
-      console.log(`After fuel filter: ${filteredVehicles.length} vehicles`);
+      console.log(`Fuel filter (${userPreferences.fuel}): ${before} → ${filteredVehicles.length}`);
     }
 
-    // Filter by transmission
     if (userPreferences.transmission && userPreferences.transmission !== 'no-preference') {
+      const before = filteredVehicles.length;
       filteredVehicles = filteredVehicles.filter(v => 
         v.transmission?.toLowerCase() === userPreferences.transmission.toLowerCase()
       );
-      console.log(`After transmission filter: ${filteredVehicles.length} vehicles`);
+      console.log(`Transmission filter (${userPreferences.transmission}): ${before} → ${filteredVehicles.length}`);
     }
 
-    // Filter by budget
     if (userPreferences.budget) {
       const { min, max } = userPreferences.budget;
+      const before = filteredVehicles.length;
       filteredVehicles = filteredVehicles.filter(v => 
         v.price >= min && v.price <= max
       );
-      console.log(`After budget filter (${min}-${max}): ${filteredVehicles.length} vehicles`);
+      console.log(`Budget filter (${min}-${max}): ${before} → ${filteredVehicles.length}`);
     }
 
-    // If too few vehicles after filtering, relax filters
-    if (filteredVehicles.length < 2) {
-      console.log('Too few vehicles after filtering, relaxing filters...');
+    // If too few results, relax body type first
+    if (filteredVehicles.length < 2 && userPreferences.bodyType && userPreferences.bodyType !== 'no-preference') {
+      console.log('Relaxing body type filter...');
       filteredVehicles = vehicles.map(v => ({
         ...v,
         features: JSON.parse(v.features || '[]'),
@@ -81,17 +72,42 @@ export async function POST(request) {
         cons: JSON.parse(v.cons || '[]'),
         images: JSON.parse(v.images || '[]'),
       }));
+      
+      // Re-apply other filters except body type
+      if (userPreferences.fuel && userPreferences.fuel !== 'no-preference') {
+        filteredVehicles = filteredVehicles.filter(v => 
+          v.fuelType?.toLowerCase() === userPreferences.fuel.toLowerCase()
+        );
+      }
+      if (userPreferences.budget) {
+        filteredVehicles = filteredVehicles.filter(v => 
+          v.price >= userPreferences.budget.min && v.price <= userPreferences.budget.max
+        );
+      }
+      console.log('After relaxing body type:', filteredVehicles.length);
     }
 
-    // Get recommendations using the scoring engine
+    // If still too few, relax budget
+    if (filteredVehicles.length < 2 && userPreferences.budget) {
+      console.log('Relaxing budget filter...');
+      filteredVehicles = vehicles.map(v => ({
+        ...v,
+        features: JSON.parse(v.features || '[]'),
+        pros: JSON.parse(v.pros || '[]'),
+        cons: JSON.parse(v.cons || '[]'),
+        images: JSON.parse(v.images || '[]'),
+      }));
+      console.log('After relaxing all filters:', filteredVehicles.length);
+    }
+
+    // Get recommendations
     const recommendations = getRecommendations(filteredVehicles, userPreferences);
 
-    console.log('Recommendations generated:', {
-      bestOverall: recommendations.bestOverall?.name,
-      bestOverallScore: recommendations.bestOverall?.chachaMatch,
-      bestAlternative: recommendations.bestAlternative?.name,
-      bestValue: recommendations.bestValue?.name,
-      totalRecommendations: recommendations.allRecommendations?.length,
+    console.log('Top recommendations:', {
+      best: recommendations.bestOverall?.name,
+      score: recommendations.bestOverall?.chachaMatch,
+      alt: recommendations.bestAlternative?.name,
+      altScore: recommendations.bestAlternative?.chachaMatch,
     });
 
     return NextResponse.json({
@@ -101,14 +117,7 @@ export async function POST(request) {
     });
 
   } catch (error) {
-    console.error('Recommendation error:', error.message);
-    console.error('Full error:', error);
-    return NextResponse.json(
-      { 
-        success: false, 
-        message: 'Failed to generate recommendations: ' + error.message 
-      },
-      { status: 500 }
-    );
+    console.error('Error:', error);
+    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
   }
 }
