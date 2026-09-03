@@ -11,7 +11,7 @@ export default function ResultsPage() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen py-12">
+      <main className="min-h-screen pt-24 md:pt-28 pb-12">
         <div className="container-custom">
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold text-white mb-4">
