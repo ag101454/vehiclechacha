@@ -12,7 +12,7 @@ export async function DELETE(request, { params }) {
     return NextResponse.json({ success: true });
 
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Delete error:', error);
     return NextResponse.json({ message: error.message }, { status: 500 });
   }
 }

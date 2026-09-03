@@ -20,7 +20,6 @@ export async function POST(request, { params }) {
       },
     });
 
-    // Update chat updatedAt
     await prisma.groupChat.update({
       where: { id },
       data: { updatedAt: new Date() },
@@ -29,7 +28,7 @@ export async function POST(request, { params }) {
     return NextResponse.json({ success: true, message: chatMessage });
 
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Send error:', error);
     return NextResponse.json({ message: error.message }, { status: 500 });
   }
 }
