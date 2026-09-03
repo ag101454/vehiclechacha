@@ -9,6 +9,7 @@ import GroupChatSection from '@/components/home/GroupChatSection';
 import MashwaraSection from '@/components/home/MashwaraSection';
 import StatsBar from '@/components/home/StatsBar';
 import ScrollSection from '@/components/shared/ScrollSection';
+import HottestChats from '@/components/home/HottestChats';
 import Link from 'next/link';
 import { ArrowRight, Sparkles, MessageCircle, Crown, Search, Zap } from 'lucide-react';
 import { prisma } from '@/lib/db';
@@ -81,6 +82,10 @@ export default async function HomePage() {
           <GroupChatSection />
         </ScrollSection>
 
+        <ScrollSection direction="up">
+        <HottestChats />
+        </ScrollSection>
+        
         {/* Popular Cars - Fade up */}
         <ScrollSection direction="up">
           <PopularCars />
