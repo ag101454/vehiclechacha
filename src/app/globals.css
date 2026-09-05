@@ -466,3 +466,75 @@ html {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* Larger Guide Content */
+.guide-content-large {
+  font-size: 1.125rem;
+  line-height: 1.9;
+}
+
+.guide-content-large h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  margin: 2rem 0 1rem;
+  line-height: 1.2;
+}
+
+.guide-content-large h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #FFC400;
+  margin: 1.5rem 0 0.75rem;
+  line-height: 1.3;
+}
+
+.guide-content-large h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #FFFFFF;
+  margin: 1.25rem 0 0.5rem;
+}
+
+.guide-content-large p {
+  margin: 1rem 0;
+  font-size: 1.125rem;
+  line-height: 1.9;
+}
+
+.guide-content-large img {
+  border-radius: 16px;
+  margin: 1.5rem 0;
+  max-width: 100%;
+  height: auto;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.guide-content-large ul, .guide-content-large ol {
+  margin: 1rem 0;
+  padding-left: 2rem;
+}
+
+.guide-content-large li {
+  margin: 0.5rem 0;
+  font-size: 1.125rem;
+}
+
+.guide-content-large blockquote {
+  border-left: 4px solid #FFC400;
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0;
+  background: rgba(255,196,0,0.05);
+  border-radius: 0 12px 12px 0;
+  font-size: 1.25rem;
+}
+
+.guide-content-large a {
+  color: #FFC400;
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.guide-content-large strong {
+  color: #FFFFFF;
+}

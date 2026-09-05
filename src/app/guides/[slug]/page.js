@@ -3,9 +3,9 @@ import Footer from '@/components/layout/Footer';
 import Link from 'next/link';
 import Image from 'next/image';
 import { 
-  ArrowLeft, Calendar, FileText, Clock, Tag, Share2, 
-  Bookmark, MessageCircle, Eye, ChevronRight, Sparkles,
-  User, ThumbsUp, Star, TrendingUp, Flame, Award
+  Calendar, FileText, Clock, Eye, ChevronRight, Sparkles,
+  User, Star, TrendingUp, Flame, Award, MessageCircle, 
+  ThumbsUp, Share2, ArrowUp, Zap, Crown, Target
 } from 'lucide-react';
 import { prisma } from '@/lib/db';
 
@@ -107,257 +107,225 @@ export default async function GuideDetailPage({ params }) {
     <>
       <Navbar />
       <main className="min-h-screen pt-24 md:pt-28 pb-12">
-        {/* HERO BANNER */}
+        {/* HERO BANNER - FULL WIDTH */}
         <div className="relative overflow-hidden border-b border-chacha-border/30">
-          <div className="absolute inset-0 bg-gradient-to-r from-chacha-yellow/10 via-transparent to-chacha-yellow/10" />
-          <div className="absolute top-0 left-0 w-24 h-24 border-t-2 border-l-2 border-chacha-yellow/40" />
-          <div className="absolute top-0 right-0 w-24 h-24 border-t-2 border-r-2 border-chacha-yellow/40" />
-          <div className="absolute bottom-0 left-0 w-24 h-24 border-b-2 border-l-2 border-chacha-yellow/40" />
-          <div className="absolute bottom-0 right-0 w-24 h-24 border-b-2 border-r-2 border-chacha-yellow/40" />
+          <div className="absolute inset-0 bg-gradient-to-r from-chacha-yellow/15 via-chacha-yellow/5 to-chacha-yellow/15" />
           
-          <div className="container-custom max-w-4xl py-12 relative z-10">
+          {/* Floating Decorative Elements */}
+          <motion.div
+            className="absolute top-10 left-10 text-4xl opacity-20"
+            animate={{ y: [0, -20, 0], rotate: [0, 10, 0] }}
+            transition={{ duration: 6, repeat: Infinity }}
+          >
+            🚗
+          </motion.div>
+          <motion.div
+            className="absolute bottom-10 right-10 text-4xl opacity-20"
+            animate={{ y: [0, 20, 0], rotate: [0, -10, 0] }}
+            transition={{ duration: 7, repeat: Infinity }}
+          >
+            🏎️
+          </motion.div>
+          <motion.div
+            className="absolute top-1/2 right-20 text-3xl opacity-10"
+            animate={{ scale: [1, 1.2, 1] }}
+            transition={{ duration: 4, repeat: Infinity }}
+          >
+            ⭐
+          </motion.div>
+
+          <div className="container-custom max-w-5xl py-14 relative z-10">
+            {/* Breadcrumbs */}
             <nav className="flex items-center gap-2 text-sm text-chacha-muted mb-6">
               <Link href="/" className="hover:text-chacha-yellow transition-colors">Home</Link>
               <ChevronRight size={14} />
               <Link href="/guides" className="hover:text-chacha-yellow transition-colors">Guides</Link>
               <ChevronRight size={14} />
-              <span className="text-white truncate max-w-[200px]">{guide.title}</span>
+              <span className="text-white">{guide.title.substring(0, 50)}...</span>
             </nav>
 
-            <div className="flex items-center gap-3 mb-4">
-              <span className="px-3 py-1 rounded-full text-xs font-bold bg-chacha-yellow/10 text-chacha-yellow border border-chacha-yellow/30">
+            {/* Badges */}
+            <div className="flex items-center gap-3 mb-5 flex-wrap">
+              <span className="px-4 py-1.5 rounded-full text-sm font-bold bg-chacha-yellow text-chacha-black shadow-lg shadow-chacha-yellow/30">
                 {guide.category || 'Guide'}
               </span>
-              <span className="text-chacha-muted text-xs flex items-center gap-1">
-                <Clock size={12} />
-                {readingTime}
+              <span className="px-3 py-1.5 rounded-full text-xs bg-green-500/10 text-green-500 border border-green-500/30 font-medium">
+                FREE GUIDE
               </span>
               <span className="text-chacha-muted text-xs flex items-center gap-1">
-                <Eye size={12} />
-                Free Guide
+                <Clock size={14} />
+                {readingTime}
               </span>
             </div>
 
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight">
+            {/* Title - LARGE */}
+            <h1 className="text-4xl md:text-6xl font-black text-white mb-5 leading-[1.1]">
               {guide.title}
             </h1>
 
-            <div className="flex items-center gap-4 text-chacha-muted text-sm flex-wrap">
-              <span className="flex items-center gap-1">
-                <div className="w-6 h-6 bg-chacha-yellow rounded-full flex items-center justify-center text-xs">
+            {/* Meta */}
+            <div className="flex items-center gap-5 text-sm flex-wrap">
+              <div className="flex items-center gap-2">
+                <div className="w-10 h-10 bg-chacha-yellow rounded-full flex items-center justify-center text-xl shadow-lg shadow-chacha-yellow/30">
                   🧔🏽
                 </div>
-                <span className="text-chacha-yellow font-medium">Chacha</span>
-              </span>
-              <span>•</span>
-              <span className="flex items-center gap-1">
+                <div>
+                  <div className="text-chacha-yellow font-bold">Chacha</div>
+                  <div className="text-chacha-muted text-xs">Car Advisor</div>
+                </div>
+              </div>
+              <div className="w-px h-8 bg-chacha-border" />
+              <span className="text-chacha-muted flex items-center gap-1">
                 <Calendar size={14} />
                 {new Date(guide.createdAt).toLocaleDateString('en-PK', {
                   day: 'numeric', month: 'long', year: 'numeric',
                 })}
               </span>
+              <div className="w-px h-8 bg-chacha-border" />
+              <span className="text-chacha-muted flex items-center gap-1">
+                <Eye size={14} />
+                {readingTime}
+              </span>
             </div>
           </div>
         </div>
 
-        {/* CONTENT WITH SIDE RAILS */}
-        <div className="container-custom max-w-6xl py-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            
-            {/* LEFT SIDEBAR - Quick Stats & Navigation */}
-            <aside className="hidden lg:block lg:col-span-3">
-              <div className="sticky top-24 space-y-4">
-                {/* Quick Stats Card */}
-                <div className="card-dark p-4 border border-chacha-yellow/20">
-                  <h4 className="text-white font-bold text-sm mb-3 flex items-center gap-2">
-                    <TrendingUp size={14} className="text-chacha-yellow" />
-                    Quick Info
-                  </h4>
-                  <div className="space-y-2 text-xs text-chacha-muted">
-                    <div className="flex justify-between">
-                      <span>Category</span>
-                      <span className="text-chacha-yellow">{guide.category}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Reading Time</span>
-                      <span className="text-chacha-yellow">{readingTime}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Author</span>
-                      <span className="text-chacha-yellow">Chacha</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Status</span>
-                      <span className="text-green-500">FREE</span>
-                    </div>
-                  </div>
-                </div>
+        {/* MAIN CONTENT - LARGER AREA */}
+        <div className="container-custom max-w-4xl py-12">
+          {/* Excerpt Highlight */}
+          {guide.excerpt && (
+            <div className="card-dark p-8 mb-8 border-l-4 border-chacha-yellow relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-chacha-yellow/5 rounded-full blur-2xl" />
+              <Sparkles className="absolute top-4 right-4 text-chacha-yellow/40" size={28} />
+              <p className="text-chacha-muted italic text-xl leading-relaxed relative z-10">
+                {guide.excerpt}
+              </p>
+            </div>
+          )}
 
-                {/* Popular Cars Card */}
-                {popularCars.length > 0 && (
-                  <div className="card-dark p-4 border border-chacha-yellow/20">
-                    <h4 className="text-white font-bold text-sm mb-3 flex items-center gap-2">
-                      <Star size={14} className="text-chacha-yellow" />
-                      Popular Cars
-                    </h4>
-                    <div className="space-y-3">
-                      {popularCars.map((car) => (
-                        <Link
-                          key={car.id}
-                          href={`/new-cars/${car.brand.slug}/${car.slug}`}
-                          className="flex items-center gap-2 group"
-                        >
-                          <div className="w-8 h-8 bg-chacha-yellow/10 rounded-lg flex items-center justify-center shrink-0">
-                            <FileText size={14} className="text-chacha-yellow" />
-                          </div>
-                          <div>
-                            <div className="text-white text-xs font-medium group-hover:text-chacha-yellow transition-colors truncate">
-                              {car.brand.name} {car.name}
-                            </div>
-                            <div className="text-chacha-muted text-[10px]">
-                              Rs. {(car.price / 100000).toFixed(1)} Lakh
-                            </div>
-                          </div>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                )}
+          {/* Main Content - BIGGER FONT */}
+          <div className="card-dark p-8 md:p-12 mb-10">
+            <div 
+              className="guide-content guide-content-large prose prose-invert max-w-none"
+              dangerouslySetInnerHTML={{ __html: guide.content || '<p>No content available yet.</p>' }}
+            />
+          </div>
 
-                {/* CTA Card */}
-                <div className="card-dark p-4 bg-gradient-to-br from-chacha-yellow/10 to-transparent border border-chacha-yellow/30">
-                  <div className="text-center">
-                    <div className="text-2xl mb-2">🧔🏽</div>
-                    <h4 className="text-white font-bold text-sm mb-2">Need Personal Help?</h4>
-                    <p className="text-chacha-muted text-xs mb-3">Chacha Ka Mashwara - FREE!</p>
-                    <Link
-                      href="/chacha-ka-mashwara"
-                      className="inline-flex items-center justify-center gap-1 bg-chacha-yellow text-chacha-black text-xs font-bold px-4 py-2 rounded-full hover:bg-yellow-400 transition-colors w-full"
-                    >
-                      Get Free Advice
-                    </Link>
-                  </div>
-                </div>
+          {/* Author Box */}
+          <div className="card-dark p-8 mb-8 flex items-center gap-6 border border-chacha-yellow/20 relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-chacha-yellow to-transparent" />
+            <div className="w-20 h-20 bg-chacha-yellow rounded-full flex items-center justify-center text-4xl shrink-0 shadow-xl shadow-chacha-yellow/30">
+              🧔🏽
+            </div>
+            <div>
+              <div className="text-white font-bold text-xl">Written by Chacha</div>
+              <p className="text-chacha-muted text-sm mt-1">
+                Pakistan&apos;s trusted car advisor. Helping you make the right car decision.
+              </p>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex items-center justify-center gap-4 mb-10 flex-wrap">
+            <button className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-blue-500/10 text-blue-500 border border-blue-500/30 hover:bg-blue-500/20 transition-colors font-medium">
+              <ThumbsUp size={18} />
+              Helpful
+            </button>
+            <button className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-green-500/10 text-green-500 border border-green-500/30 hover:bg-green-500/20 transition-colors font-medium">
+              <Share2 size={18} />
+              Share
+            </button>
+            <button className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-chacha-yellow/10 text-chacha-yellow border border-chacha-yellow/30 hover:bg-chacha-yellow/20 transition-colors font-medium">
+              <Bookmark size={18} />
+              Save
+            </button>
+          </div>
+
+          {/* Other Guides - FULL WIDTH CARDS */}
+          {otherGuides.length > 0 && (
+            <div className="mb-10">
+              <div className="flex items-center gap-3 mb-6">
+                <Flame size={24} className="text-orange-500" />
+                <h3 className="text-white font-bold text-2xl">More Guides</h3>
               </div>
-            </aside>
-
-            {/* MAIN CONTENT */}
-            <div className="lg:col-span-6">
-              {/* Excerpt */}
-              {guide.excerpt && (
-                <div className="card-dark p-6 mb-6 border-l-4 border-chacha-yellow relative overflow-hidden">
-                  <Sparkles className="absolute top-3 right-3 text-chacha-yellow/30" size={24} />
-                  <p className="text-chacha-muted italic text-lg leading-relaxed">
-                    {guide.excerpt}
-                  </p>
-                </div>
-              )}
-
-              {/* Main Content */}
-              <div className="card-dark p-6 md:p-8 mb-6">
-                <div 
-                  className="guide-content prose prose-invert max-w-none"
-                  dangerouslySetInnerHTML={{ __html: guide.content || '<p>No content available yet.</p>' }}
-                />
-              </div>
-
-              {/* Author Box */}
-              <div className="card-dark p-6 mb-6 flex items-center gap-4 border border-chacha-yellow/20">
-                <div className="w-14 h-14 bg-chacha-yellow rounded-full flex items-center justify-center text-2xl shrink-0">
-                  🧔🏽
-                </div>
-                <div>
-                  <div className="text-white font-bold">Written by Chacha</div>
-                  <p className="text-chacha-muted text-xs">
-                    Pakistan&apos;s trusted car advisor since 2026
-                  </p>
-                </div>
-              </div>
-
-              {/* Share Section */}
-              <div className="card-dark p-4 flex items-center justify-center gap-3 border border-chacha-yellow/20">
-                <span className="text-chacha-muted text-xs">Share this guide:</span>
-                <button className="p-2 rounded-full bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 transition-colors">
-                  <ThumbsUp size={14} />
-                </button>
-                <button className="p-2 rounded-full bg-green-500/10 text-green-500 hover:bg-green-500/20 transition-colors">
-                  <Share2 size={14} />
-                </button>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                {otherGuides.map((other) => (
+                  <Link
+                    key={other.id}
+                    href={`/guides/${other.slug}`}
+                    className="card-dark p-6 hover:border-chacha-yellow transition-all group relative overflow-hidden"
+                  >
+                    <div className="absolute top-0 right-0 w-20 h-20 bg-chacha-yellow/5 rounded-full blur-xl group-hover:bg-chacha-yellow/10 transition-colors" />
+                    <div className="w-12 h-12 bg-chacha-yellow/10 rounded-xl flex items-center justify-center mb-4">
+                      <FileText size={22} className="text-chacha-yellow" />
+                    </div>
+                    <span className="text-chacha-yellow text-xs font-bold">{other.category}</span>
+                    <div className="text-white font-bold mt-2 group-hover:text-chacha-yellow transition-colors line-clamp-2">
+                      {other.title}
+                    </div>
+                    <div className="text-chacha-muted text-xs mt-3 flex items-center gap-1">
+                      <Clock size={12} />
+                      {getReadingTime(other.content)}
+                    </div>
+                  </Link>
+                ))}
               </div>
             </div>
+          )}
 
-            {/* RIGHT SIDEBAR - More Guides & CTA */}
-            <aside className="hidden lg:block lg:col-span-3">
-              <div className="sticky top-24 space-y-4">
-                {/* More Guides */}
-                {otherGuides.length > 0 && (
-                  <div className="card-dark p-4 border border-chacha-yellow/20">
-                    <h4 className="text-white font-bold text-sm mb-3 flex items-center gap-2">
-                      <Flame size={14} className="text-orange-500" />
-                      More Guides
-                    </h4>
-                    <div className="space-y-3">
-                      {otherGuides.map((other) => (
-                        <Link
-                          key={other.id}
-                          href={`/guides/${other.slug}`}
-                          className="block group"
-                        >
-                          <div className="text-white text-xs font-medium group-hover:text-chacha-yellow transition-colors line-clamp-2">
-                            {other.title}
-                          </div>
-                          <div className="text-chacha-muted text-[10px] mt-1">
-                            {other.category} • {getReadingTime(other.content)}
-                          </div>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Group Chat CTA */}
-                <div className="card-dark p-4 bg-gradient-to-br from-green-500/10 to-transparent border border-green-500/30">
-                  <div className="text-center">
-                    <div className="text-2xl mb-2">💬</div>
-                    <h4 className="text-white font-bold text-sm mb-2">Join the Discussion</h4>
-                    <p className="text-chacha-muted text-xs mb-3">Ask questions in group chat</p>
-                    <Link
-                      href="/group-chat"
-                      className="inline-flex items-center justify-center gap-1 bg-green-500 text-white text-xs font-bold px-4 py-2 rounded-full hover:bg-green-600 transition-colors w-full"
-                    >
-                      <MessageCircle size={12} />
-                      Join Chat
-                    </Link>
-                  </div>
-                </div>
-
-                {/* Award Badge */}
-                <div className="card-dark p-4 text-center border border-chacha-yellow/30">
-                  <Award className="mx-auto text-chacha-yellow mb-2" size={24} />
-                  <div className="text-white font-bold text-xs">Trusted Guide</div>
-                  <div className="text-chacha-muted text-[10px] mt-1">Verified by VehicleChacha</div>
-                </div>
+          {/* Popular Cars Strip */}
+          {popularCars.length > 0 && (
+            <div className="mb-10">
+              <div className="flex items-center gap-3 mb-6">
+                <Star size={24} className="text-chacha-yellow" />
+                <h3 className="text-white font-bold text-2xl">Popular Cars Mentioned</h3>
               </div>
-            </aside>
-          </div>
-        </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {popularCars.map((car) => (
+                  <Link
+                    key={car.id}
+                    href={`/new-cars/${car.brand.slug}/${car.slug}`}
+                    className="card-dark p-4 flex items-center gap-3 hover:border-chacha-yellow transition-all group"
+                  >
+                    <div className="w-12 h-12 bg-chacha-yellow/10 rounded-xl flex items-center justify-center shrink-0">
+                      <span className="text-xl">🚗</span>
+                    </div>
+                    <div>
+                      <div className="text-white font-semibold text-sm group-hover:text-chacha-yellow transition-colors">
+                        {car.brand.name} {car.name}
+                      </div>
+                      <div className="text-chacha-muted text-xs">
+                        Rs. {(car.price / 100000).toFixed(1)} Lakh
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
 
-        {/* BOTTOM CTA */}
-        <div className="container-custom max-w-4xl mt-10">
-          <div className="card-dark p-8 text-center relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-r from-chacha-yellow/10 to-transparent" />
+          {/* Final CTA */}
+          <div className="card-dark p-10 text-center relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-r from-chacha-yellow/10 via-transparent to-green-500/10" />
+            <div className="absolute top-0 left-0 w-16 h-16 border-t-2 border-l-2 border-chacha-yellow" />
+            <div className="absolute bottom-0 right-0 w-16 h-16 border-b-2 border-r-2 border-green-500" />
             <div className="relative z-10">
-              <h3 className="text-2xl font-bold text-white mb-3">
-                Ready to Find Your Perfect Car?
+              <div className="text-5xl mb-4">🧔🏽</div>
+              <h3 className="text-3xl font-black text-white mb-3">
+                Ready to Find Your{' '}
+                <span className="text-chacha-yellow">Perfect Car?</span>
               </h3>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Link href="/find-my-car" className="btn-primary inline-flex items-center justify-center gap-2 px-8 py-3 font-bold">
-                  <Sparkles size={18} />
+              <p className="text-chacha-muted mb-8 max-w-md mx-auto">
+                Let Chacha guide you to the right decision with personalized recommendations
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link href="/find-my-car" className="btn-primary inline-flex items-center justify-center gap-2 px-10 py-4 text-lg font-bold rounded-full shadow-lg shadow-chacha-yellow/30 hover:shadow-chacha-yellow/50 hover:scale-105 transition-all">
+                  <Sparkles size={20} />
                   Find My Car
                 </Link>
-                <Link href="/group-chat" className="inline-flex items-center justify-center gap-2 px-8 py-3 font-bold rounded-full bg-green-500 text-white hover:bg-green-600 transition-colors">
-                  <MessageCircle size={18} />
-                  Join Group Chat
+                <Link href="/chacha-ka-mashwara" className="inline-flex items-center justify-center gap-2 px-10 py-4 text-lg font-bold rounded-full bg-green-500 text-white hover:bg-green-600 hover:scale-105 transition-all shadow-lg shadow-green-500/30">
+                  <Crown size={20} />
+                  Free Mashwara
                 </Link>
               </div>
             </div>
