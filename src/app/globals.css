@@ -458,3 +458,11 @@ html {
 .guide-content em {
   font-style: italic;
 }
+
+/* Line clamp for guide cards */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
