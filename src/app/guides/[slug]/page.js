@@ -112,27 +112,27 @@ export default async function GuideDetailPage({ params }) {
           <div className="absolute inset-0 bg-gradient-to-r from-chacha-yellow/15 via-chacha-yellow/5 to-chacha-yellow/15" />
           
           {/* Floating Decorative Elements */}
-          <motion.div
+          <div
             className="absolute top-10 left-10 text-4xl opacity-20"
             animate={{ y: [0, -20, 0], rotate: [0, 10, 0] }}
             transition={{ duration: 6, repeat: Infinity }}
           >
             🚗
-          </motion.div>
-          <motion.div
+          </div>
+          <div
             className="absolute bottom-10 right-10 text-4xl opacity-20"
             animate={{ y: [0, 20, 0], rotate: [0, -10, 0] }}
             transition={{ duration: 7, repeat: Infinity }}
           >
             🏎️
-          </motion.div>
-          <motion.div
+          </div>
+          <div
             className="absolute top-1/2 right-20 text-3xl opacity-10"
             animate={{ scale: [1, 1.2, 1] }}
             transition={{ duration: 4, repeat: Infinity }}
           >
             ⭐
-          </motion.div>
+          </div>
 
           <div className="container-custom max-w-5xl py-14 relative z-10">
             {/* Breadcrumbs */}
