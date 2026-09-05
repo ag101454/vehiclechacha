@@ -272,3 +272,117 @@ html {
     transform: translateY(-40px);
   }
 }
+
+/* Rich Text Editor Content Styles */
+.prose h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin: 1.5rem 0 1rem;
+}
+
+.prose h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #FFC400;
+  margin: 1.25rem 0 0.75rem;
+}
+
+.prose p {
+  margin: 0.75rem 0;
+  line-height: 1.7;
+}
+
+.prose img {
+  border-radius: 0.75rem;
+  margin: 1rem 0;
+  max-width: 100%;
+}
+
+.prose ul, .prose ol {
+  margin: 0.75rem 0;
+  padding-left: 1.5rem;
+}
+
+.prose li {
+  margin: 0.25rem 0;
+}
+
+.prose blockquote {
+  border-left: 3px solid #FFC400;
+  padding-left: 1rem;
+  margin: 1rem 0;
+  color: #A3A3A3;
+  font-style: italic;
+}
+
+/* Guide Editor Styles */
+.guide-editor .ProseMirror {
+  outline: none;
+  min-height: 300px;
+}
+
+.guide-editor .guide-image {
+  max-width: 100%;
+  border-radius: 12px;
+  margin: 16px 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.guide-editor .guide-image.is-selected,
+.guide-editor .guide-image.ProseMirror-selectednode {
+  outline: 3px solid #FFC400;
+  outline-offset: 2px;
+  cursor: move;
+}
+
+.guide-editor .guide-link {
+  color: #FFC400;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.guide-editor h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin: 1.5rem 0 1rem;
+}
+
+.guide-editor h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #FFC400;
+  margin: 1.25rem 0 0.75rem;
+}
+
+.guide-editor p {
+  margin: 0.75rem 0;
+  line-height: 1.8;
+  color: #A3A3A3;
+}
+
+.guide-editor ul, .guide-editor ol {
+  margin: 0.75rem 0;
+  padding-left: 1.5rem;
+  color: #A3A3A3;
+}
+
+.guide-editor li {
+  margin: 0.25rem 0;
+}
+
+.guide-editor blockquote {
+  border-left: 3px solid #FFC400;
+  padding-left: 1rem;
+  margin: 1rem 0;
+  color: #A3A3A3;
+  font-style: italic;
+}
+
+.guide-editor img {
+  border-radius: 12px;
+  max-width: 100%;
+  height: auto;
+}

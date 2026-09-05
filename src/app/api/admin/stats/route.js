@@ -1,8 +1,11 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/db';
+import { prisma, ensureConnection } from '@/lib/db';
 
 export async function GET() {
   try {
+    // Ensure database connection is alive
+    await ensureConnection();
+
     // Get all counts in parallel
     const [
       totalVehicles,
@@ -63,7 +66,16 @@ export async function GET() {
     });
 
   } catch (error) {
-    console.error('Stats error:', error);
+    console.error('Stats error:', error.message);
+    
+    // Try to reconnect on error
+    try {
+      await prisma.$disconnect();
+      await prisma.$connect();
+    } catch (reconnectError) {
+      console.error('Reconnect failed:', reconnectError.message);
+    }
+    
     return NextResponse.json(
       { message: 'Failed to fetch stats', error: error.message },
       { status: 500 }

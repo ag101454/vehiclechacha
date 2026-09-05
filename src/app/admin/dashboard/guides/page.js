@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Plus, RefreshCw, FileText, Trash2, Edit, Search } from 'lucide-react';
+import RichTextEditor from '@/components/admin/RichTextEditor';
 
 export default function AdminGuidesPage() {
   const router = useRouter();
@@ -11,11 +12,13 @@ export default function AdminGuidesPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [editingGuide, setEditingGuide] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
     category: 'Buying Guide',
     excerpt: '',
     content: '',
+    image: '',
   });
 
   useEffect(() => {
@@ -27,9 +30,7 @@ export default function AdminGuidesPage() {
     try {
       const response = await fetch('/api/admin/guides', { cache: 'no-store' });
       const data = await response.json();
-      if (response.ok) {
-        setGuides(data.guides || []);
-      }
+      if (response.ok) setGuides(data.guides || []);
     } catch (error) {
       console.error('Error:', error);
     } finally {
@@ -41,14 +42,19 @@ export default function AdminGuidesPage() {
     e.preventDefault();
     setSaving(true);
     try {
-      const response = await fetch('/api/admin/guides', {
-        method: 'POST',
+      const url = editingGuide ? `/api/admin/guides/${editingGuide.id}` : '/api/admin/guides';
+      const method = editingGuide ? 'PUT' : 'POST';
+      
+      const response = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
+      
       if (response.ok) {
         setShowForm(false);
-        setFormData({ title: '', category: 'Buying Guide', excerpt: '', content: '' });
+        setEditingGuide(null);
+        setFormData({ title: '', category: 'Buying Guide', excerpt: '', content: '', image: '' });
         fetchGuides();
       }
     } catch (error) {
@@ -56,6 +62,18 @@ export default function AdminGuidesPage() {
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleEdit = (guide) => {
+    setEditingGuide(guide);
+    setFormData({
+      title: guide.title,
+      category: guide.category || 'Buying Guide',
+      excerpt: guide.excerpt || '',
+      content: guide.content || '',
+      image: guide.image || '',
+    });
+    setShowForm(true);
   };
 
   const handleDelete = async (id) => {
@@ -92,16 +110,18 @@ export default function AdminGuidesPage() {
           <button onClick={fetchGuides} className="btn-secondary flex items-center gap-1 px-4 py-2 text-sm">
             <RefreshCw size={14} /> Refresh
           </button>
-          <button onClick={() => setShowForm(!showForm)} className="btn-primary flex items-center gap-1 px-4 py-2 text-sm">
-            <Plus size={14} /> Add Guide
+          <button onClick={() => { setEditingGuide(null); setShowForm(!showForm); }} className="btn-primary flex items-center gap-1 px-4 py-2 text-sm">
+            <Plus size={14} /> {showForm ? 'Cancel' : 'Add Guide'}
           </button>
         </div>
       </div>
 
-      {/* Add Guide Form */}
+      {/* Add/Edit Form */}
       {showForm && (
         <div className="card-dark p-6 mb-6">
-          <h3 className="text-white font-bold text-lg mb-4">Add New Guide</h3>
+          <h3 className="text-white font-bold text-lg mb-4">
+            {editingGuide ? 'Edit Guide' : 'Add New Guide'}
+          </h3>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -143,16 +163,13 @@ export default function AdminGuidesPage() {
             </div>
             <div>
               <label className="block text-white text-sm mb-1">Content *</label>
-              <textarea
-                value={formData.content}
-                onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                rows={6}
-                className="w-full bg-chacha-black border border-chacha-border rounded-lg px-4 py-2.5 text-white focus:border-chacha-yellow focus:outline-none"
-                required
+              <RichTextEditor
+                content={formData.content}
+                onChange={(html) => setFormData({ ...formData, content: html })}
               />
             </div>
             <button type="submit" disabled={saving} className="btn-primary px-6 py-2.5">
-              {saving ? 'Saving...' : 'Save Guide'}
+              {saving ? 'Saving...' : editingGuide ? 'Update Guide' : 'Save Guide'}
             </button>
           </form>
         </div>
@@ -182,7 +199,7 @@ export default function AdminGuidesPage() {
           {filteredGuides.map((guide) => (
             <div key={guide.id} className="card-dark p-5">
               <div className="flex items-start justify-between">
-                <div>
+                <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-chacha-yellow text-xs bg-chacha-yellow/10 px-2 py-1 rounded-full">
                       {guide.category}
@@ -194,12 +211,22 @@ export default function AdminGuidesPage() {
                     {new Date(guide.createdAt).toLocaleDateString('en-PK')}
                   </div>
                 </div>
-                <button
-                  onClick={() => handleDelete(guide.id)}
-                  className="p-2 text-red-500 hover:bg-red-500/10 rounded-full transition-colors"
-                >
-                  <Trash2 size={16} />
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleEdit(guide)}
+                    className="p-2 text-blue-500 hover:bg-blue-500/10 rounded-full transition-colors"
+                    title="Edit"
+                  >
+                    <Edit size={16} />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(guide.id)}
+                    className="p-2 text-red-500 hover:bg-red-500/10 rounded-full transition-colors"
+                    title="Delete"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
               </div>
             </div>
           ))}

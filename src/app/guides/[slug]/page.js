@@ -119,9 +119,10 @@ export default async function GuideDetailPage({ params }) {
 
           {/* Content */}
           <div className="card-dark p-6 md:p-8 mb-8">
-            <div className="text-chacha-muted leading-relaxed whitespace-pre-wrap">
-              {guide.content}
-            </div>
+          -<div 
+            className="text-chacha-muted leading-relaxed whitespace-pre-wrap guide-content"
+            dangerouslySetInnerHTML={{ __html: guide.content }}
+            />
           </div>
 
           {/* Other Guides */}
