@@ -114,6 +114,18 @@ const brands = [
     bgGradient: 'from-red-900/20 to-red-900/5',
     borderHover: 'hover:border-red-900/50',
   },
+  {
+    name: 'BYD',
+    slug: 'byd',
+    logo: '/images/brands/byd.png',
+    fallback: 'BYD',
+    color: '#E60012',
+    description: 'Electric Vehicle Pioneer',
+    carsCount: 'Coming Soon',
+    rating: 'New Entry',
+    bgGradient: 'from-red-500/20 to-red-500/5',
+    borderHover: 'hover:border-red-500/50',
+  },
 ];
 
 export default function BrandShowcase() {

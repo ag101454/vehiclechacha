@@ -13,16 +13,17 @@ export const metadata = {
 };
 
 const brandLogos = {
-    'toyota': '/images/brands/toyota.png',
-    'honda': '/images/brands/honda.png',
-    'suzuki': '/images/brands/suzuki.png',
-    'kia': '/images/brands/kia.png',
-    'hyundai': '/images/brands/hyundai.png',
-    'mg': '/images/brands/mg.png',
-    'changan': '/images/brands/changan.png',
-    'deepal': '/images/brands/deepal.png',  // ADD
-    'jaecoo': '/images/brands/jaecoo.png',  // ADD
-  };
+  'toyota': '/images/brands/toyota.png',
+  'honda': '/images/brands/honda.png',
+  'suzuki': '/images/brands/suzuki.png',
+  'kia': '/images/brands/kia.png',
+  'hyundai': '/images/brands/hyundai.png',
+  'mg': '/images/brands/mg.png',
+  'changan': '/images/brands/changan.png',
+  'deepal': '/images/brands/deepal.png',
+  'jaecoo': '/images/brands/jaecoo.png',
+  'byd': '/images/brands/byd.png',
+};
 
 async function getBrands() {
   try {

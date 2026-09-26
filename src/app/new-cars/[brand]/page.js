@@ -29,6 +29,7 @@ export async function generateMetadata({ params }) {
         'changan': 'Value-packed Chinese cars',
         'deepal': 'Electric and future-ready cars',
         'jaecoo': 'Luxury Chinese SUVs with premium features',
+        'byd': 'World-leading electric vehicle technology',
       };
       return {
         title: `${brand.name} Cars in Pakistan - Prices & Specs | VehicleChacha`,
@@ -64,17 +65,17 @@ async function getBrandWithAllVehicles(slug) {
 }
 
 const brandLogos = {
-    'toyota': '/images/brands/toyota.png',
-    'honda': '/images/brands/honda.png',
-    'suzuki': '/images/brands/suzuki.png',
-    'kia': '/images/brands/kia.png',
-    'hyundai': '/images/brands/hyundai.png',
-    'mg': '/images/brands/mg.png',
-    'changan': '/images/brands/changan.png',
-    'deepal': '/images/brands/deepal.png',  // ADD
-    'jaecoo': '/images/brands/jaecoo.png',  // ADD
-  };
-
+  'toyota': '/images/brands/toyota.png',
+  'honda': '/images/brands/honda.png',
+  'suzuki': '/images/brands/suzuki.png',
+  'kia': '/images/brands/kia.png',
+  'hyundai': '/images/brands/hyundai.png',
+  'mg': '/images/brands/mg.png',
+  'changan': '/images/brands/changan.png',
+  'deepal': '/images/brands/deepal.png',
+  'jaecoo': '/images/brands/jaecoo.png',
+  'byd': '/images/brands/byd.png',
+};
 export default async function BrandPage({ params }) {
   const brand = await getBrandWithAllVehicles(params.brand);
 
