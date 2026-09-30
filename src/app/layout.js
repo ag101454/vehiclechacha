@@ -5,16 +5,17 @@ import OrganizationSchema from '@/components/seo/OrganizationSchema';
 
 export const metadata = {
   metadataBase: new URL('https://vehiclechacha.vercel.app'),
-  
+
   // ===== TITLE =====
   title: {
     default: 'VehicleChacha - New Cars in Pakistan 2026 | Compare Prices & Find Your Car',
     template: '%s | VehicleChacha',
   },
-  
+
   // ===== DESCRIPTION =====
-  description: 'Find the right car for your budget in Pakistan. Compare new cars, check latest prices, read reviews, and get personalized recommendations from Chacha.',
-  
+  description:
+    'Find the right car for your budget in Pakistan. Compare new cars, check latest prices, read reviews, and get personalized recommendations from Chacha.',
+
   // ===== KEYWORDS =====
   keywords: [
     'new cars Pakistan',
@@ -40,42 +41,45 @@ export const metadata = {
     'electric cars Pakistan',
     'BYD Pakistan',
   ],
-  
+
   // ===== AUTHORS & CREATOR =====
   authors: [{ name: 'VehicleChacha' }],
   creator: 'VehicleChacha',
   publisher: 'VehicleChacha',
-  
+
   // ===== FORMAT DETECTION =====
-  formatDetection: { 
-    email: false, 
-    address: false, 
-    telephone: false 
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
   },
-  
+
   // ===== FAVICON / ICONS =====
+  // The file icon.png must be placed in /public/icon.png
   icons: {
     icon: [
-      { url: '/icon.png', type: 'image/png' },
-      { url: '/favicon.ico' },
+      { url: '/icon.png', type: 'image/png', sizes: '512x512' },
     ],
     shortcut: '/icon.png',
-    apple: '/apple-icon.png',
+    apple: [
+      { url: '/icon.png', sizes: '180x180', type: 'image/png' },
+    ],
   },
-  
+
   // ===== GOOGLE VERIFICATION =====
   verification: {
     google: 'googleb56284ef43af8364',
   },
-  
-  // ===== OPEN GRAPH (Facebook, WhatsApp, LinkedIn) =====
+
+  // ===== OPEN GRAPH =====
   openGraph: {
     type: 'website',
     locale: 'en_PK',
     url: 'https://vehiclechacha.vercel.app',
     siteName: 'VehicleChacha',
     title: "VehicleChacha - Pakistan's Trusted Car Advisor",
-    description: 'Compare new cars in Pakistan, check prices, read reviews, and find the right car for your budget.',
+    description:
+      'Compare new cars in Pakistan, check prices, read reviews, and find the right car for your budget.',
     images: [
       {
         url: '/images/logo/vehiclechacha-logo.png',
@@ -86,7 +90,7 @@ export const metadata = {
       },
     ],
   },
-  
+
   // ===== TWITTER CARDS =====
   twitter: {
     card: 'summary_large_image',
@@ -95,7 +99,7 @@ export const metadata = {
     images: ['/images/logo/vehiclechacha-logo.png'],
     creator: '@vehiclechacha',
   },
-  
+
   // ===== ROBOTS =====
   robots: {
     index: true,
@@ -110,12 +114,12 @@ export const metadata = {
       'max-video-preview': -1,
     },
   },
-  
+
   // ===== ALTERNATES =====
   alternates: {
     canonical: 'https://vehiclechacha.vercel.app',
   },
-  
+
   // ===== OTHER META =====
   other: {
     'application-name': 'VehicleChacha',
@@ -138,18 +142,6 @@ export const viewport = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        {/* Preconnect for performance */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        
-        {/* Theme Color */}
-        <meta name="theme-color" content="#0A0A0A" />
-        
-        {/* Favicon fallback */}
-        <link rel="icon" href="/icon.png" type="image/png" />
-        <link rel="apple-touch-icon" href="/apple-icon.png" />
-      </head>
       <body className="bg-chacha-black text-white min-h-screen">
         <OrganizationSchema />
         <WelcomeWrapper />
