@@ -1,4 +1,5 @@
 import './globals.css';
+import Script from 'next/script';
 import WelcomeWrapper from '@/components/intro/WelcomeWrapper';
 import ChatbotWidget from '@/components/chat/ChatbotWidget';
 import OrganizationSchema from '@/components/seo/OrganizationSchema';
@@ -55,7 +56,6 @@ export const metadata = {
   },
 
   // ===== FAVICON / ICONS =====
-  // The file icon.png must be placed in /public/icon.png
   icons: {
     icon: [
       { url: '/icon.png', type: 'image/png', sizes: '512x512' },
@@ -143,6 +143,13 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="bg-chacha-black text-white min-h-screen">
+        {/* ===== ADSTERRA POPUNDER SCRIPT ===== */}
+        <Script
+          id="adsterra-popunder"
+          src="https://pl31636709.profitableratecpmnetwork.com/fe/e8/6b/fee86b59401fb905fbda4ff23570e03f.js"
+          strategy="afterInteractive"
+        />
+
         <OrganizationSchema />
         <WelcomeWrapper />
         {children}
