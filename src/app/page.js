@@ -10,6 +10,7 @@ import MashwaraSection from '@/components/home/MashwaraSection';
 import StatsBar from '@/components/home/StatsBar';
 import ScrollSection from '@/components/shared/ScrollSection';
 import HottestChats from '@/components/home/HottestChats';
+import FuelPricesWidget from '@/components/home/FuelPricesWidget';
 import Link from 'next/link';
 import { ArrowRight, Sparkles, MessageCircle, Crown, Search, Zap } from 'lucide-react';
 import { prisma } from '@/lib/db';
@@ -68,6 +69,15 @@ export default async function HomePage() {
           </section>
         </ScrollSection>
 
+        {/* ===== FUEL PRICES WIDGET - Right under Find My Car button ===== */}
+        <ScrollSection direction="up" delay={0.05}>
+          <section className="pt-6 pb-2">
+            <div className="container-custom">
+              <FuelPricesWidget />
+            </div>
+          </section>
+        </ScrollSection>
+
         {/* Stats - Fade up with delay */}
         <ScrollSection direction="up" delay={0.1}>
           <section className="py-10">
@@ -82,8 +92,9 @@ export default async function HomePage() {
           <GroupChatSection />
         </ScrollSection>
 
+        {/* Hottest Chats - Fade up */}
         <ScrollSection direction="up">
-        <HottestChats />
+          <HottestChats />
         </ScrollSection>
         
         {/* Popular Cars - Fade up */}
