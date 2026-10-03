@@ -143,10 +143,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="bg-chacha-black text-white min-h-screen">
-        {/* ===== ADSTERRA POPUNDER SCRIPT ===== */}
+        {/* ===== ADSTERRA SOCIAL BAR SCRIPT ===== */}
         <Script
-          id="adsterra-popunder"
-          src="https://pl31636709.profitableratecpmnetwork.com/fe/e8/6b/fee86b59401fb905fbda4ff23570e03f.js"
+          id="adsterra-socialbar"
+          src="https://pl31636710.profitableratecpmnetwork.com/92/d6/1e/92d61e90a27a31d89bbb154c5aaa2917.js"
           strategy="afterInteractive"
         />
 
