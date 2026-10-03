@@ -73,45 +73,86 @@ export default async function NewCarsPage({ searchParams }) {
       <Navbar />
       <main className="min-h-screen pt-20 md:pt-24 pb-12">
         <div className="container-custom">
+          {/* ===== PAGE HEADER ===== */}
           <div className="mb-10">
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
               New Cars in <span className="text-chacha-yellow">Pakistan</span>
             </h1>
             <p className="text-chacha-muted text-lg max-w-2xl">
-              Explore all new cars available in Pakistan.
+              Explore all new cars available in Pakistan. Compare prices, 
+              specifications, and features to find the perfect car for you.
             </p>
           </div>
 
+          {/* ===== FILTERS ===== */}
           <NewCarsFilters />
 
-          {/* ===== AD: SINGLE BANNER (Top Only) ===== */}
+          {/* ===== AD #1: TOP BANNER (728x90 Desktop / 320x50 Mobile) ===== */}
           <div className="my-6">
             <div className="hidden md:flex justify-center">
-              <AdsterraBanner adKey="5c9f59c6eac5e2c5c4ccbe2174a355fb" width={728} height={90} />
+              <AdsterraBanner 
+                adKey="5c9f59c6eac5e2c5c4ccbe2174a355fb" 
+                width={728} 
+                height={90} 
+              />
             </div>
             <div className="flex md:hidden justify-center">
-              <AdsterraBanner adKey="4ed29ca6cde7744d7a2a216fd40822ed" width={320} height={50} />
+              <AdsterraBanner 
+                adKey="4ed29ca6cde7744d7a2a216fd40822ed" 
+                width={320} 
+                height={50} 
+              />
             </div>
           </div>
 
           {cars.length === 0 ? (
             <div className="card-dark p-16 text-center">
               <CarIcon className="mx-auto text-chacha-muted mb-4" size={64} />
-              <h2 className="text-white text-2xl font-bold mb-2">No Cars Found</h2>
-              <p className="text-chacha-muted mb-6">Try adjusting your filters or check back soon.</p>
+              <h2 className="text-white text-2xl font-bold mb-2">
+                No Cars Found
+              </h2>
+              <p className="text-chacha-muted mb-6">
+                Try adjusting your filters or check back soon.
+              </p>
             </div>
           ) : (
             <>
+              {/* ===== RESULTS COUNT ===== */}
               <div className="flex items-center justify-between mb-4">
                 <p className="text-chacha-muted text-sm">
                   Showing <span className="text-chacha-yellow font-semibold">{cars.length}</span> cars
+                  {searchParams?.minRating && (
+                    <span className="ml-2 inline-flex items-center gap-1">
+                      with <Star size={14} className="fill-chacha-yellow text-chacha-yellow" />
+                      <span className="text-chacha-yellow">{searchParams.minRating}+ rating</span>
+                    </span>
+                  )}
                 </p>
               </div>
 
+              {/* ===== CARS GRID ===== */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {cars.map((car) => (
                   <CarCard key={car.id} car={car} />
                 ))}
+              </div>
+
+              {/* ===== AD #2: BOTTOM BANNER (728x90 Desktop / 320x50 Mobile) ===== */}
+              <div className="mt-10">
+                <div className="hidden md:flex justify-center">
+                  <AdsterraBanner 
+                    adKey="cfe66b1f02490f8cc5d105764bf19fbf" 
+                    width={728} 
+                    height={90} 
+                  />
+                </div>
+                <div className="flex md:hidden justify-center">
+                  <AdsterraBanner 
+                    adKey="4ed29ca6cde7744d7a2a216fd40822ed" 
+                    width={320} 
+                    height={50} 
+                  />
+                </div>
               </div>
             </>
           )}
