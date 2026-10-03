@@ -2,31 +2,52 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Fuel, RefreshCw, TrendingUp, Zap, Droplet, Flame } from 'lucide-react';
+import { Fuel, RefreshCw, Zap, Droplet, Flame, Clock } from 'lucide-react';
 
 export default function FuelPricesWidget() {
   const [prices, setPrices] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [lastUpdated, setLastUpdated] = useState(null);
+  const [timeAgo, setTimeAgo] = useState('');
 
   useEffect(() => {
     fetchPrices();
   }, []);
 
+  // Update "time ago" every minute
+  useEffect(() => {
+    if (!lastUpdated) return;
+
+    const updateTimeAgo = () => {
+      const diffMs = Date.now() - new Date(lastUpdated).getTime();
+      const mins = Math.floor(diffMs / 60000);
+
+      if (mins < 1) setTimeAgo('just now');
+      else if (mins < 60) setTimeAgo(`${mins}m ago`);
+      else {
+        const hours = Math.floor(mins / 60);
+        setTimeAgo(`${hours}h ago`);
+      }
+    };
+
+    updateTimeAgo();
+    const interval = setInterval(updateTimeAgo, 60000); // Update every minute
+
+    return () => clearInterval(interval);
+  }, [lastUpdated]);
+
   const fetchPrices = async () => {
     try {
       setLoading(true);
+      // Add cache: 'no-store' to force fresh fetch on manual refresh
       const response = await fetch('/api/fuel-prices');
-      
+
       if (!response.ok) throw new Error('Failed to fetch');
-      
+
       const data = await response.json();
       setPrices(data);
-      setLastUpdated(new Date().toLocaleTimeString('en-PK', {
-        hour: '2-digit',
-        minute: '2-digit',
-      }));
+      setLastUpdated(data.cached_at || new Date().toISOString());
       setError(null);
     } catch (err) {
       setError('Prices temporarily unavailable');
@@ -106,7 +127,10 @@ export default function FuelPricesWidget() {
             </div>
             <div>
               <div className="text-white font-bold text-sm">Pakistan Fuel Prices</div>
-              <div className="text-chacha-muted text-xs">Live Rates Today</div>
+              <div className="text-chacha-muted text-xs flex items-center gap-1">
+                <Clock size={10} />
+                Updated {timeAgo}
+              </div>
             </div>
           </div>
           <button
@@ -157,6 +181,11 @@ export default function FuelPricesWidget() {
             <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
             Source: PSO &amp; Shell
           </div>
+        </div>
+
+        {/* Cache Info */}
+        <div className="text-center text-chacha-muted text-[10px] mt-2">
+          Auto-refreshes every hour • {prices.cache_duration || '1 hour'} cache
         </div>
       </div>
     </motion.div>
