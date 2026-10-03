@@ -12,6 +12,7 @@ export default function AdsterraBanner({
   const scriptLoaded = useRef(false);
 
   useEffect(() => {
+    // Prevent duplicate ads in React Strict Mode
     if (bannerRef.current && !scriptLoaded.current) {
       scriptLoaded.current = true;
 
@@ -32,7 +33,7 @@ export default function AdsterraBanner({
       // Invoke script
       const invokeScript = document.createElement('script');
       invokeScript.type = 'text/javascript';
-      invokeScript.src = `//www.highperformanceformat.com/${adKey}/invoke.js`;
+      invokeScript.src = `https://www.highrevenueformat.com/${adKey}/invoke.js`;
       invokeScript.async = true;
       bannerRef.current.appendChild(invokeScript);
     }

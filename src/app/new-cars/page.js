@@ -2,6 +2,7 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import CarCard from '@/components/cars/CarCard';
 import NewCarsFilters from '@/components/cars/NewCarsFilters';
+import AdsterraBanner from '@/components/ads/AdsterraBanner';
 import { prisma } from '@/lib/db';
 import { Car as CarIcon, Star } from 'lucide-react';
 import Link from 'next/link';
@@ -77,35 +78,33 @@ export default async function NewCarsPage({ searchParams }) {
               New Cars in <span className="text-chacha-yellow">Pakistan</span>
             </h1>
             <p className="text-chacha-muted text-lg max-w-2xl">
-              Explore all new cars available in Pakistan. Compare prices, 
-              specifications, and features to find the perfect car for you.
+              Explore all new cars available in Pakistan.
             </p>
           </div>
 
           <NewCarsFilters />
 
+          {/* ===== AD: SINGLE BANNER (Top Only) ===== */}
+          <div className="my-6">
+            <div className="hidden md:flex justify-center">
+              <AdsterraBanner adKey="5c9f59c6eac5e2c5c4ccbe2174a355fb" width={728} height={90} />
+            </div>
+            <div className="flex md:hidden justify-center">
+              <AdsterraBanner adKey="4ed29ca6cde7744d7a2a216fd40822ed" width={320} height={50} />
+            </div>
+          </div>
+
           {cars.length === 0 ? (
             <div className="card-dark p-16 text-center">
               <CarIcon className="mx-auto text-chacha-muted mb-4" size={64} />
-              <h2 className="text-white text-2xl font-bold mb-2">
-                No Cars Found
-              </h2>
-              <p className="text-chacha-muted mb-6">
-                Try adjusting your filters or check back soon.
-              </p>
+              <h2 className="text-white text-2xl font-bold mb-2">No Cars Found</h2>
+              <p className="text-chacha-muted mb-6">Try adjusting your filters or check back soon.</p>
             </div>
           ) : (
             <>
-              {/* Results Count */}
               <div className="flex items-center justify-between mb-4">
                 <p className="text-chacha-muted text-sm">
                   Showing <span className="text-chacha-yellow font-semibold">{cars.length}</span> cars
-                  {searchParams?.minRating && (
-                    <span className="ml-2 inline-flex items-center gap-1">
-                      with <Star size={14} className="fill-chacha-yellow text-chacha-yellow" />
-                      <span className="text-chacha-yellow">{searchParams.minRating}+ rating</span>
-                    </span>
-                  )}
                 </p>
               </div>
 
